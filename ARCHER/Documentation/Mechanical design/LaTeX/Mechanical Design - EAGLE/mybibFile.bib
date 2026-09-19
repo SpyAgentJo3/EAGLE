@@ -1,0 +1,139 @@
+% Folgende Eingabefelder werden empfohlen:
+
+% article
+% An article from a journal or magazine. Required fields: author, title, journal,
+% year. Optional fields: volume, number, pages, month, note.
+
+% book
+% A book with an explicit publisher. Required fields: author or editor, title,
+% publisher, year. Optional fields: volume or number, series, address, edition,
+% month, note.
+
+% inbook
+% A part of a book, which may be a chapter (or section or whatever) and/or
+% a range of pages. Required fields: author or editor, title, chapter and/or pages,
+% publisher, year. Optional fields: volume or number, series, type, address, edition,
+% month, note.
+
+% incollection
+% A part of a book having its own title. Required fields: author, title,
+% booktitle, publisher, year. Optional fields: editor, volume or number, series, type,
+% chapter, pages, address, edition, month, note.
+
+% inproceedings
+% An article in conference proceedings. Required fields: author, title,
+% booktitle, year. Optional fields: editor, volume or number, series, pages, address,
+% month, organization, publisher, note.
+
+% booklet
+% A work that is printed and bound, but without a named publisher or
+% sponsoring institution. Required field: title. Optional fields: author, howpublished,
+% address, month, year, note.
+
+% misc
+% Use this type when nothing else fits. Required fields: none. Optional fields:
+% author, title, howpublished, month, year, note.
+
+% proceedings
+% (kann durch booklet ersetzt werden) The proceedings of a confe-
+% rence. Required fields: title, year. Optional fields: editor, volume or number, series,
+% address, month, organization, publisher, note.
+
+% Nichtempfohlen:
+
+% – conference (statt dessen inproceedings, sind ident)
+% – manual, mastersthesis, phdthesis, techreport (es wird ein Text wie
+% Ph. D. Thesis oder Tech. Report im Literaturverzeichnis mit ausgegeben, den
+% man oft nicht haben will; statt dessen f¨ur all diese ”graue Literatur“ je nach
+% Geschmack booklet oder misc verwenden)
+% – unpublished (kann in misc abgebildet werden)
+
+% Hier sind ein paar willkürliche Beispiele gegeben. Kurzbefehle für Shorttitles von Journals sind in einer Liste preambel.tex definiert.
+% Diese Liste kann beliebig erweitert werden. Man kann auch jeden Eintrag für Journalabkürzung manuell eintragen, kann
+% bei großen Literaturverzeichnissen zu Fehlern führen.
+
+@article{Scholze2008,
+    author       = {Scholze,F.  and Tartz,M.  and Neumann,H. },
+    title        = {Inductive coupled radio frequency plasma bridge neutralizer},
+    journal      = {Review of Scientific Instruments},
+    shortjournal = {\rsi},
+    volume       = {79},
+    number       = {2},
+    pages        = {02B724},
+    year         = {2008},
+    doi          = {10.1063/1.2802587},
+    URL          = {https://aip.scitation.org/doi/abs/10.1063/1.2802587},
+    eprint       = {https://aip.scitation.org/doi/pdf/10.1063/1.2802587}
+    }
+    
+@misc{Falcon_9_grid_fins,
+	author = {SpaceX},
+	title = {Iridium 2 mission},
+	month = {6},
+	year = {2017},
+	URL = {https://www.flickr.com/photos/spacex/35533873795/}
+}
+    
+@inbook{EurocAV,
+	author		= {In\^{e}s d'\'{A}vila},
+	title		= {System Requirement Document},
+	chapter		= {Recovery Systems and Avionics},
+	pages       = {24-35},
+	month		= {3},
+	year		= {2025},
+	note		= {Ref.: PTS\_EDU\_EuRoC\_ST\_001928}
+}
+
+@inbook{Airbrakes,
+	author = {A. Darby \& A. Surve \& B. Schnupp \& J. Yoo \& J. Alizo \& K. Kim \& M. Vassilev and P. Novin},
+	title = {Design and Testing of an Airbrake System for a Sounding Rocket},
+	publisher = {American Institue of Aeronautics and Astronautics, Inc.},
+	chapter = {Mechanical Design},
+	pages = {3},
+	year = {2025},
+	note = {Figure 2}	
+}
+
+@book{Susskind2014,
+     author      = {Leonard Susskind and George Hrabovsky},
+     title       = {Classical mechanics: the theoretical minimum},
+     publisher   = {Penguin Random House},
+     address     = {New York, NY},
+     year        = {2014}
+    }
+
+@incollection{Maskin1985,
+    author       = {Maskin, Eric S.},
+    year         = {1985},
+    title        = {The theory of implementation in {N}ash equilibrium: a survey},
+    booktitle    = {Social Goals and Social Organization},
+    editor       = {Leonid Hurwicz and David Schmeidler and Hugo Sonnenschein},
+    pages        = {173-204},
+    publisher    = {Cambridge University Press},
+    address      = {Cambridge}
+    }
+
+@inproceedings{Aggaewal2006,
+    author       = {Aggarwal, Gagan and Hartline, Jason D.},
+    year         = {2006},
+    title        = {Knapsack auctions},
+    booktitle    = {Proceedings of the 17th Annual ACM-SIAM Symposium on Discrete Algorithms},
+    pages        = {1083-1092},
+    publisher    = {Association for Computing Machinery},
+    address      = {New York}
+    }
+
+@misc{Aarrow1948,
+    author       = {Arrow, Kenneth J.},
+    title        = {The possibility of a universal social welfare function},
+    howpublished = {RAND Corporation, P-41},
+    year         = {1948},
+    note         = {Technischer Bericht}
+    }
+
+@misc{Fudenberg1988,
+  title          = {A theory of learning, experimentation, and equilibrium in games},
+  author         = {Fudenberg, Drew and Kreps, David M.},
+  year           = {1988},
+  note           = {Unveröffentlichtes Manuskript}
+}

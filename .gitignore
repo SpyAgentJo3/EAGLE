@@ -1,0 +1,29 @@
+# Core LaTeX auxiliary files
+*.aux
+*.log
+*.toc
+*.lof
+*.lot
+*.out
+*.fls
+*.fmt
+
+# Bibliography files
+*.bbl
+*.blg
+*.bcf
+*.run.xml
+
+# Build tools and sync files
+*.fdb_latexmk
+*.synctex.gz
+*.synctex.gz(busy)
+*.pdfsync
+
+# Beamer presentation files
+*.nav
+*.snm
+*.vrb
+
+# Optional: Ignore the final PDF output if you only want to track source files
+# *.pdf

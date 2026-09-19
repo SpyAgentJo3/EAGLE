@@ -1,0 +1,249 @@
+% Einbindung von wichigten Paketen
+\usepackage[headsepline=on, automark]{scrlayer-scrpage}
+\usepackage[english, main=ngerman]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+%\usepackage{fourier} % Adobe Utopia Font
+\usepackage{microtype}
+%\microtypesetup{expansion=false} % bei Verwendung von fourier eventuell notwendig
+\usepackage{scrdate}
+\usepackage{scrtime}
+\usepackage{lastpage}
+\usepackage{upgreek}
+\usepackage[svgnames]{xcolor}
+\usepackage{blindtext} % Erzeugt Blindtext. Nur f\"{u}r Testlauf dieses Dokuments wichtig.
+\usepackage{graphicx}
+\usepackage{siunitx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{threeparttable}
+\usepackage{typearea}
+\usepackage{tikz}
+\usepackage{tikzpagenodes}
+\usepackage{epigraph}
+\usepackage{ellipsis}
+\usepackage{soul}
+\usepackage[nohyperlinks]{acronym}
+\usepackage[autostyle,german=guillemets]{csquotes}
+\usepackage[defaultlines = 4, all]{nowidow}
+\clubpenalty = 9999
+\widowpenalty = 9999
+\displaywidowpenalty = 9999
+\usepackage{eurosym}
+
+% Die AMS-Mathe-Pakete
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{setspace}
+\usepackage{hyperref} % immer als letztes Paket laden
+% Hintergrundvariablen des PDFs
+\hypersetup{pdfauthor={Martina Musterfrau},
+            pdftitle={Abschlussarbeit},
+            pdfsubject={Abschlussarbeit},
+            pdfkeywords={Abschlussarbeit PTRA},
+            pdfproducer={Latex with hyperref},
+            pdfcreator={pdflatex, MikTeX, WinEDT oder andere}
+            }
+
+% Farbdefinitionen
+\definecolor{jluhellblau}{RGB}{220, 230, 235}
+\definecolor{pantoneblack}{RGB}{0,0,0}
+\definecolor{jlugrau}{RGB}{83, 96, 107}
+\definecolor{jlublau}{RGB}{0, 105, 179}
+\definecolor{chaptergrey}{rgb}{0.7,0.7,0.7}
+\definecolor{thmgreen}{RGB}{128,186,36}
+\definecolor{thmgrau}{RGB}{74,92,102}
+\definecolor{thmblau}{RGB}{0,59,209}
+\definecolor{thmbhellblau}{RGB}{64,255,237}
+
+
+
+% Kopf- und Fu{\ss}zeilenlayout
+\clearpairofpagestyles
+\automark[chapter]{chapter}
+\automark*[section]{}
+\ihead{}
+\ohead{\headmark}
+\ifoot{Erstellt am \ISOToday T\thistime} % f\"{u}r finales Dokument auskommentieren
+%\ifoot{} % f\"{u}r finales Dokument aktivieren
+\ofoot{\,\pagemark\ von \pageref*{LastPage}}
+\chead{}
+\cfoot[]{}
+
+% Fu{\ss}notenmarker fett
+\deffootnote{1em}{1em}{\bfseries\thefootnotemark\ }
+
+% Formatierung Tabellen- und Abbildungsbeschriftung
+\setcapindent{0pt} % keine Einr\"{u}ckung der Caption
+\renewcommand{\floatpagefraction}{1.0}
+\addtokomafont{caption}{\footnotesize}
+\setkomafont{captionlabel}{\bfseries\sffamily}
+
+% Literaturverzeichnis mit BibLaTeX
+\usepackage[backend = biber, style=numeric-comp, sorting = none, giveninits = true]{biblatex}
+\ifjournalabbrev
+\usepackage{biblatex-shortfields}
+\else\fi
+
+\DefineBibliographyStrings{ngerman}{andothers = {{et\,al\adddot}},}
+\addbibresource{mybibFile.bib}
+
+
+
+
+% Es ist im Literaturverzeichnis unn\"{o}tig, DOI, URL und eprint gleichzeitig zu zeigen. Dieser Abschnitt macht eine
+% Fallunterscheidung. Ist die DOI vorhanden, werden URL und eprint nicht angezeigt. Ist DOI nicht vorhanden, aber
+% die beiden anderen Eintr\"{a}ge, wird die URL ausgegeben, nicht aber der eprint-Eintrag.
+\renewbibmacro*{doi+eprint+url}{%
+  \iftoggle{bbx:doi}
+    {\printfield{doi}}
+    {}%
+  \newunit\newblock
+  \ifboolexpr{togl {bbx:eprint} and test {\iffieldundef{doi}}}
+    {\usebibmacro{eprint}}
+    {}%
+  \newunit\newblock
+  \ifboolexpr{togl {bbx:url} and test {\iffieldundef{doi}}  and test {\iffieldundef{eprint}}}
+    {\usebibmacro{url+urldate}}
+    {}}
+\renewbibmacro{in:}{%
+  \ifentrytype{article}{}{\printtext{\bibstring{in}\intitlepunct}}}
+% Ende Literaturverzeichnis-Definitionen
+
+% Start Kapitelseiten-Designs
+\ifdesignEins
+\addtokomafont{chapterprefix}{\raggedleft}
+\renewcommand*{\chapterformat}{%
+\mbox{\chapappifchapterprefix{\nobreakspace}%
+\scalebox{3}{\color{chaptergrey}\thechapter\autodot}\enskip}}
+\else
+\fi
+\newif\ifdesignEins
+% zweites Design
+\ifdesignZwei
+\setkomafont{chapter}{\huge}
+\setkomafont{chapterprefix}{\normalfont\normalsize\slshape}
+\newkomafont{chapternumber}{\fontsize{100}{100}\selectfont}
+\renewcommand\chapterformat{%
+  \usekomafont{chapter}
+  \raisebox{1.25\baselineskip}{\makebox[0pt][r]{\usekomafont{chapterprefix}\chapapp\enskip}}%
+  \raisebox{-.5\baselineskip}{\usekomafont{chapternumber}\thechapter}%
+}
+\RedeclareSectionCommand[
+  innerskip=1ex
+]{chapter}
+\newbox\chapternumberbox
+\makeatletter
+\renewcommand\chapterlinesformat[3]{%
+  \Ifstr{#1}{chapter}{%
+    \Ifstr{#2}{}{#3}{%
+      \savebox\chapternumberbox{\chapterformat}%
+      \parbox[t]{\dimexpr\textwidth-\wd\chapternumberbox-1em\relax}{\raggedchapter#3}%
+       \quad#2%
+    }%
+    }{\@hangfrom{#2}{#3}}%
+}
+\makeatother
+\renewcommand\raggedchapter{\raggedleft}
+\else
+\fi
+\ifdesignDrei
+\makeatletter
+ \renewcommand*{\chapterformat}{%
+   \begingroup
+     \setlength{\unitlength}{1mm}%
+     \begin{picture}(10,10)(0,5)
+       \setlength{\fboxsep}{0pt}
+       \put(10,15){\line(1,0){\dimexpr
+           \textwidth-20\unitlength\relax\@gobble}}%
+       \put(0,0){\makebox(10,20)[r]{%
+           \fontsize{28\unitlength}{28\unitlength}\selectfont\thechapter
+           \kern-.05em% Ziffer in der Zeichenzelle nach rechts schieben
+         }}%
+       \put(10,15){\makebox(\dimexpr
+           \textwidth-20\unitlength\relax\@gobble,\ht\strutbox\@gobble)[l]{%
+             \ \normalsize\color{black}\chapapp~\thechapter\autodot
+           }}%
+     \end{picture}
+   \endgroup
+}
+\else
+\fi
+% Ende des Kapitelseiten-Designs
+
+% L\"{o}st ein Problem, dass Abbildungen ans Ende des Kapitels schiebt
+\renewcommand{\floatpagefraction}{0.8}
+\renewcommand{\topfraction} {0.8}
+\renewcommand{\bottomfraction} {0.5}
+\renewcommand{\textfraction} {0.15}
+\raggedbottom
+
+% Neuberechnung des Satzspiegels nach Defintion aller Parameter
+\recalctypearea
+
+% Soll Schusterjungen verhindern
+\noclub
+
+\pdfminorversion=7
+
+% Wenn man die Kurzform der Journalnamen verwenden will, sind folgende Zeilen nützlich.
+% z.B. einfach \actaa in shortjorunal einsetzen, erzeugt Acta.Astron.
+
+\newcommand{\actaa}{Acta Astron.}   % Acta Astronomica
+\newcommand{\araa}{Annu. Rev. Astron. Astrophys.}   % Annual Review of Astron and Astrophys
+\newcommand{\aar}{Astron. Astrophys. Rev.} % Astrononmy and Astrophysics Review
+\newcommand{\ab}{Astrobiol.}    % Astrobiology
+\newcommand{\aj}{Astron. J.}   % Astronomical Journal
+\newcommand{\apj}{Astrophys. J.}   % Astrophysical Journal
+\newcommand{\apjl}{Astrophys. J. Lett.}   % Astrophysical Journal, Letters
+\newcommand{\apjs}{Astrophys. J. Suppl. Ser.}   % Astrophysical Journal, Supplement
+\newcommand{\ao}{Appl. Opt.}   % Applied Optics
+\newcommand{\apss}{Astrophys. Space Sci.}   % Astrophysics and Space Science
+\newcommand{\aap}{Astron. Astrophys.}   % Astronomy and Astrophysics
+\newcommand{\aapr}{Astron. Astrophys. Rev.}   % Astronomy and Astrophysics Reviews
+\newcommand{\aaps}{Astron. Astrophys. Suppl.}   % Astronomy and Astrophysics, Supplement
+\newcommand{\baas}{Bull. Am. Astron. Soc.}   % Bulletin of the AAS
+\newcommand{\caa}{Chinese Astron. Astrophys.}   % Chinese Astronomy and Astrophysics
+\newcommand{\cjaa}{Chinese J. Astron. Astrophys.}   % Chinese Journal of Astronomy and Astrophysics
+\newcommand{\cqg}{Class. Quantum Gravity}    % Classical and Quantum Gravity
+\newcommand{\gal}{Galaxies}    % Galaxies
+\newcommand{\gca}{Geochim. Cosmochim. Acta}   % Geochimica Cosmochimica Acta
+\newcommand{\icarus}{Icarus}   % Icarus
+\newcommand{\jcap}{J. Cosmol. Astropart. Phys.}   % Journal of Cosmology and Astroparticle Physics
+\newcommand{\jgr}{J. Geophys. Res.}   % Journal of Geophysics Research
+\newcommand{\jgrp}{J. Geophys. Res.: Planets}    % Journal of Geophysics Research: Planets
+\newcommand{\jqsrt}{J. Quant. Spectrosc. Radiat. Transf.} % Journal of Quantitiative Spectroscopy and Radiative Transfer
+\newcommand{\memsai}{Mem. Soc. Astron. Italiana}   % Mem. Societa Astronomica Italiana
+\newcommand{\mnras}{Mon. Not. R. Astron. Soc.}   % Monthly Notices of the RAS
+\newcommand{\nat}{Nature} % Nature
+\newcommand{\nastro}{Nat. Astron.} % Nature Astronomy
+\newcommand{\ncomms}{Nat. Commun.} % Nature Communications
+\newcommand{\nphys}{Nat. Phys.} % Nature Physics
+\newcommand{\na}{New Astron.}   % New Astronomy
+\newcommand{\nar}{New Astron. Rev.}   % New Astronomy Review
+\newcommand{\physrep}{Phys. Rep.}   % Physics Reports
+\newcommand{\pra}{Phys. Rev. A}   % Physical Review A: General Physics
+\newcommand{\prb}{Phys. Rev. B}   % Physical Review B: Solid State
+\newcommand{\prc}{Phys. Rev. C}   % Physical Review C
+\newcommand{\prd}{Phys. Rev. D}   % Physical Review D
+\newcommand{\pre}{Phys. Rev. E}   % Physical Review E
+\newcommand{\prl}{Phys. Rev. Lett.}   % Physical Review Letters
+\newcommand{\psj}{Planet. Sci. J.}   % Planetary Science Journal
+\newcommand{\planss}{Planet. Space Sci.}   % Planetary Space Science
+\newcommand{\pnas}{Proc. Natl Acad. Sci. USA}   % Proceedings of the US National Academy of Sciences
+\newcommand{\procspie}{Proc. SPIE}   % Proceedings of the SPIE
+\newcommand{\pasa}{Publ. Astron. Soc. Aust.}   % Publications of the Astron. Soc. of Australia
+\newcommand{\pasj}{Publ. Astron. Soc. Jpn}   % Publications of the Astron. Soc. of Japan (note no full stop following Jpn)
+\newcommand{\pasp}{Publ. Astron. Soc. Pac.}   % Publications of the Astron. Soc. of the Pacific
+\newcommand{\rsi}{Rev. Sci. Instrum.}   % Review of Scientific Instruments
+\newcommand{\rmxaa}{Rev. Mexicana Astron. Astrofis.}   % Revista Mexicana de Astronomia y Astrofisica
+\newcommand{\sci}{Science} % Science
+\newcommand{\sciadv}{Sci. Adv.} % Science Advances
+\newcommand{\solphys}{Sol. Phys.}   % Solar Physics
+\newcommand{\sovast}{Soviet Ast.}   % Soviet Astronomy
+\newcommand{\ssr}{Space Sci. Rev.}   % Space Science Reviews
+\newcommand{\uni}{Universe} % Universe 

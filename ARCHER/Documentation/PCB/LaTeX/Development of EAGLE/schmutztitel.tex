@@ -1,0 +1,75 @@
+% Schmutztitel wird einseitig gesetzt, um Layout
+% nicht zu zerschreddern
+% Wer den Schmutztitel nicht haben will, l\"{o}scht diesen Teil einfach
+\KOMAoptions{twoside=false}
+% Beginn des Schmutztitels als Teil der Titlepage-Umgebung
+\begin{titlepage}%Schmutztitel; Grafiken mit Tikz erstellt; Signet eingebunden
+\begin{tikzpicture}[remember picture,overlay,shift={(current page.south)}]
+
+
+\fill[left color=thmgreen, right color=jluhellblau] (-9,10) rectangle +(20,15.5);
+
+\node at (7.5,25.5) {\includegraphics[width = 0.32\textwidth]{logo1.jpg}};
+\node at (-2.5,26.8) {\includegraphics[width = 0.85\textwidth]{THM_logo.eps}};
+
+\fill[left color=jlublau!100, right color=jlublau!100](-10,5) rectangle +(17.5,6);
+
+\node [text width=14cm] at (-1.0, 8.4)
+{
+\sffamily
+\color{white}
+\begin{center}
+\Large
+\textbf{Bachelorarbeit}\\[1.1ex]
+\LARGE
+\textbf{Experimentelle Untersuchungen zum Beamen während des Fliegens mit Warp-Geschwindigkeit}\\[1.1ex]
+\Large
+\textbf{Experimental studies on beaming while flying at warp speed}\\[1.1ex]
+\textbf{Martina Musterfrau}\\[1.2ex]
+\Large
+\textbf{Sommersemester 2021}
+\end{center}
+};
+
+\node [text width=4cm] at (9.75,2){\LARGE \sffamily \color{black}{\textbf{P}}\color{thmgreen}{\textbf{T}}\color{jlublau}{\textbf{R}}\color{black}{\textbf{A}}};
+
+% Auskommentieren erzeugt Hilfslinien und Punkte auf Schmutztitelseite
+% kann hilfreich für Anpassungen sein
+%\draw [help lines] (-10,0) grid (10,30);
+%\draw [fill=black] (0, 0) circle (0.1);
+%\draw [fill=black] (0, 5) circle (0.1);
+%\draw [fill=black] (0, 10) circle (0.1);
+%\draw [fill=black] (0, 15) circle (0.1);
+%\draw [fill=black] (0, 20) circle (0.1);
+%\draw [fill=black] (0, 25) circle (0.1);
+%\draw [fill=black] (5, 0) circle (0.1);
+%\draw [fill=black] (5, 5) circle (0.1);
+%\draw [fill=black] (5, 10) circle (0.1);
+%\draw [fill=black] (5, 15) circle (0.1);
+%\draw [fill=black] (5, 20) circle (0.1);
+%\draw [fill=black] (5, 25) circle (0.1);
+%\draw [fill=black] (-10, 0) circle (0.1);
+%\draw [fill=black] (-10, 5) circle (0.1);
+%\draw [fill=black] (-10, 10) circle (0.1);
+%\draw [fill=black] (-10, 15) circle (0.1);
+%\draw [fill=black] (-10, 20) circle (0.1);
+%\draw [fill=black] (-10, 25) circle (0.1);
+%\draw [fill=black] (-5, 0) circle (0.1);
+%\draw [fill=black] (-5, 5) circle (0.1);
+%\draw [fill=black] (-5, 10) circle (0.1);
+%\draw [fill=black] (-5, 15) circle (0.1);
+%\draw [fill=black] (-5, 20) circle (0.1);
+%\draw [fill=black] (-5, 25) circle (0.1);
+%\draw [fill=black] (10, 0) circle (0.1);
+%\draw [fill=black] (10, 5) circle (0.1);
+%\draw [fill=black] (10, 10) circle (0.1);
+%\draw [fill=black] (10, 15) circle (0.1);
+%\draw [fill=black] (10, 20) circle (0.1);
+%\draw [fill=black] (10, 25) circle (0.1);
+
+
+
+
+\end{tikzpicture}
+\end{titlepage}
+% Ende des Schmutztitels 

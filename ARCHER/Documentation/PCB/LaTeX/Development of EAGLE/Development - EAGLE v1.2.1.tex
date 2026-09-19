@@ -1,0 +1,147 @@
+% Dies ist ein Beispiel-Tex-File f\"{u}r eine wissenschaftliche Arbeit
+% Es kann nach Belieben ver\"{a}ndert werden
+% Die Präambel ist größtenteils ausgelagert
+% Details zu den Paketen sind den entsprechenden Dokus zu entnehmen
+% Insbesondere die KOMA-Skript-Doku sollte jeder mal angeschaut haben
+% Erstellt von K. Holste f\"{u}r den PTRA-Studiengang
+
+% Festlegung der Dokumentklasse
+\documentclass[fontsize=11pt,%
+twoside,% oneside als Alternative m\"{o}glich
+BCOR          = 8mm, % bei Bedarf anzupassen
+DIV           = 11,  % kann nach Belieben geändert werden
+titlepage     = off,%
+index=totoc,%
+xcolor        = pdftex,%
+dvipsnames,%
+bibliography  = totoc,%
+%bibliography = numbered,% bei Bedarf einschalten
+listof        = notnumbered]{scrreprt}
+
+\input{variablendeklaration.tex} % variablendeklaration.tex wird benötigt (für verschiedene Layouts der Kapitelseite)
+
+% Layout der Kapitelseite kann hier geändert werden
+% werden alle drei Optionen ausgeklammert (mit %), wird KOMA-Default verwendet:
+
+%\designEinstrue
+%\designZweitrue
+\designDreitrue
+
+% Hier geht es um abgekürzte Journal-Namen
+% True = Journalnamen werden abgekürzt, sofern Abkürzungsfeld vorhanden (shortjournal)
+% False = keine Abkürzung (es reicht, die folgende Zeile auszukommentieren)
+\journalabbrevtrue
+
+\input{preambel.tex} % preambel.tex wird benötigt
+
+\pagestyle{empty}
+
+\begin{document}
+
+% Schmutztitel im einseitigen Layout
+\input{schmutztitel.tex} % schmutztitel.tex wird benötigt
+
+% ab hier wieder zweiseitiges Format
+\KOMAoptions{twoside=true}
+
+% richtige Titelseite; Ausrichtung an Satzspiegel
+\input{titlepage} % titlepage.tex wird benötigt
+\cleardoublepage
+
+% Kopf- und Fußzeile wird aktiviert
+\pagestyle{scrheadings}
+
+% Korrektur Seitenzahl
+% Muss eventuell korrigiert werden, so dass das
+% Inhaltsverzeichnis die richtige Seitenzahl hat
+%!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+\setcounter{page}{5} %!!!!!!!!!!!!!!!!!!!!!!!!!!
+%!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+% Inhaltsverzeichnis sowie weitere Verzeichnisse
+\tableofcontents
+\cleardoublepage
+
+\listoffigures
+\cleardoublepage
+
+\listoftables
+\cleardoublepage
+
+\chapter*{Abk\"{u}rzungsverzeichnis}
+\begin{acronym}
+\acro{eugh}[ESA]{\dotfill European Space Agency}
+\acro{eu}[JLU]{\dotfill Justus-Liebig-Universit\"{a}t Gie{\ss}en}
+\end{acronym}
+\cleardoublepage
+
+\input{Abstract} % ben\"{o}tigt Abstract.tex
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Hier geht das Dokument richtig los
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Einleitung}\label{chap:einleitung}
+
+% Wer's mag, hier ein Beispiel-Epigraph, in Abschlussarbeiten < Promotion eher unüblich, aber nicht verboten
+\epigraph{Schlauer Spruch.}{Schlaue Person}
+\noindent{}Hier ein Text mit Fu{\ss}note.\footnote{Fu{\ss}note}
+\Blindtext
+\cleardoublepage % jedes Kapitel ended mit \cleardoublepage, damit neues Kapitel recto startet
+
+\chapter{Theoretische Grundlagen}\label{chap:theorie}
+
+\section{Ideales Gasgesetz}\label{sec:idealesgas}
+Bezug auf Kapitel~\ref{chap:einleitung}.
+\blindtext
+\blindtext\cite{Scholze2008}\cite{Susskind2014}\cite{Maskin1985}\cite{Aggaewal2006}\cite{Aarrow1948}\cite{Fudenberg1988}
+\blindmathpaper
+\Blindtext
+
+\section{Schr\"{o}dingergleichung}\label{sec:schroedinger}
+\blindtext
+\cleardoublepage
+
+\chapter{Experimentelle Methoden}\label{chap:experiment}
+\Blindtext
+\begin{figure}
+\centering
+\includegraphics[width=0.95\textwidth]{beispielbild.jpg}
+\caption[Kurze Bildunterschrift für Abbildungsverzeichnis]{Langer Text für Bildunterschrift. \blindtext}
+\label{fig:abbildung1}
+\end{figure}
+
+\section{Elektronenspektrometer}\label{sec:electronenspectrometer}
+\blindtext
+
+\section{Vakuumanlage}\label{sec:vakuumanlage}
+\blindtext
+\cleardoublepage
+
+\chapter{Diskussion}\label{chap:diskussion}
+
+\section{Diskussionsteil A}\label{sec:diskussionA}
+\Blindtext
+
+\section{Diskussionsteil B}\label{sec:diskussionB}
+\Blindtext
+\cleardoublepage
+
+\chapter{Ausblick}\label{chap:ausblick}
+\Blindtext
+\cleardoublepage
+
+% Hier wird das Literaturverzeichnis eingebunden
+\printbibliography
+\cleardoublepage
+
+\appendix
+
+\chapter{Ergänzende Informationen 1}
+\blindtext
+\cleardoublepage
+
+\chapter{Ergänzende Informationen 2}
+\blindtext
+
+\end{document} 

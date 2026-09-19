@@ -1,0 +1,55 @@
+*Requirements für Kommunikation zwischen Sensorik und EAGLE:*
+
+*Allgemein:* 
+- Kommunikation über float arrays mit hardgecodetem format
+
+*Was WIR gerne hätten:*
+- GNSS height
+- GNSS velocity
+- (Absolute rotation) -> am besten 1-2 VERSCHIEDENE Quellen
+- (GNSS longitude and latitude) -> könnte man zur triangulation der rotation nutzen, wenn man sich hasst :)
+
+Array aufbau (korrigiere falls daten mehr platz brauchen):
+arr[0] bis arr[3]: GNSS height
+arr[4] bis arr[7]: GNSS velocity
+arr[8] bis arr[11]: Absolute rotation (um z-Achse des äußeren Systems (nicht Raketensystem)
+arr[8] bis arr[i]: Longitude and latitude -> depending on how big said data is
+
+*Was du im worst case bekommst:*
+- ADXLaccel.X (4 byte - float)
+- ADXLaccel.Y (4 byte - float)
+- ADXLaccel.Z (4 byte - float) 
+
+- KXaccel.X (4 byte - float)
+- KXaccel.Y (4 byte - float)
+- KXaccel.Z (4 byte - float)
+
+- ICMaccel.X (4 byte - float)
+- ICMaccel.Y (4 byte - float)
+- ICMaccel.Z (4 byte - float)
+- (ICMrotvel.X) -> eignetlich nicht relevant für Recovery (4 byte - float)
+- (ICMrotvel.Y) -> eignetlich nicht relevant für Recovery (4 byte - float)
+- ICMrotvel.Z (4 byte - float) 
+
+- MPL absolute pressure (4 byte - float)
+- (Altimeter) -> als Referenzwert (4 byte - float)
+
+- MS5611 absolute pressure (4 byte - float)
+- (Altimeter) -> als Referenzwert (4 byte - float)
+
+- Status (1 byte)
+
+- Filtered values:
+	- AccelX (4 byte - float)
+	- AccelY (4 byte - float)
+	- AccelZ (4 byte - float)
+	- RotVelZ (4 byte - float)
+	- Pressure (4 byte - float)
+	- Height (4 byte - float)
+
+*INSGESAMT* (max.): 95 bytes
+
+- Arrayaufbau hardgecodet mit csv formatierung
+- Alles in klammern ist optional und wird evtl. rausgekürzt
+	-> wird am ende angehängt, damit man es ohne probleme entfernen kann
+	-> filtered values for error checking of the digital filter
