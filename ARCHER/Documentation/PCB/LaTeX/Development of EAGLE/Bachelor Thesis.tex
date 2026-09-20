@@ -32,6 +32,7 @@ listof        = notnumbered]{scrreprt}
 \definecolor{light grey}{RGB}{182,182,182}
 \usepackage{rotating}
 \usepackage{tablefootnote}
+\usepackage{refcount}
 \usepackage{hhline}
 \usepackage{adjustbox}
 \usepackage{subcaption}
@@ -161,6 +162,7 @@ The development process of a printed circuit board for this system according to 
 		\acro{IMU}[IMU]{\dotfill Inertial Measurement Unit}
 		\acro{JLU}[JLU]{\dotfill Justus-Liebig-University Giessen}
 		\acro{THM}[THM]{\dotfill Technische Hochschule Mittelhessen}
+		\acro{OSR}[OSR]{\dotfill Oversampling ratio}
 	\end{acronym}
 	\cleardoublepage
 
@@ -566,6 +568,126 @@ For those reasons, the ESP32-S3-Vroom-N4-1u was chosen as the microcontroller fo
 \newpage
 
 \subsection{Sensor characteristics}
+
+\begin{center}
+	\captionof{table}{Inertial Measurement Unit(IMU) characteristics Nr.1}	
+	\label{tab:sensor_imu1}
+	\begin{adjustbox}{width=1.15\textwidth}		 
+		\begin{tabular}{|r||c|c|c|c|c||c|c|c|c|} \hline		
+			& \multicolumn{5}{c||}{\textbf{BMI160}} & \multicolumn{4}{c|}{\textbf{MPU6500}}\\ \hline
+			
+			\rowcolor{light grey} $Accelerometer Specs$ & \multicolumn{5}{c}{} & \multicolumn{4}{c}{} \\ \hline \hline
+			
+			\textbf{Measurement Range} & 2\,g & 4\,g & 8\,g & \multicolumn{2}{c||}{16\,g}& 2\,g & 4\,g & 8\,g & 16\,g\\ \hline
+			
+			\textbf{Output Resolution} & \multicolumn{5}{c||}{16\,bits} & \multicolumn{4}{c|}{16\,bits}\\ \hline
+			
+			\textbf{Sensitivity} (Typical) & 16384\,$\frac{\text{LSB}}{\text{g}}$ & 8912\,$\frac{\text{LSB}}{\text{g}}$ & 4096\,$\frac{\text{LSB}}{\text{g}}$ & \multicolumn{2}{c||}{2048\,$\frac{\text{LSB}}{\text{g}}$} & 16384\,$\frac{\text{LSB}}{\text{g}}$ & 8192\,$\frac{\text{LSB}}{\text{g}}$ & 4096\,$\frac{\text{LSB}}{\text{g}}$ & 2048\,$\frac{\text{LSB}}{\text{g}}$\\ \hline
+			
+			\multirowcell{2}{\shortstack[r]{\textbf{Sensitivity change}\\ \textbf{due to temperature}}} & \textbf{x} & \multicolumn{2}{c|}{\textbf{y}} & \multicolumn{2}{c||}{\textbf{z}} & \textbf{x} & \multicolumn{2}{c|}{\textbf{y}} & \textbf{z}\\ \cline{2-10}
+			
+			& \multicolumn{5}{c||}{$\pm0.03\,\frac{\%}{\text{°\text{C}}}$} & \multicolumn{4}{c|}{$\pm0.026\,\frac{\%}{\text{°\text{C}}}$}\\ \hline
+			
+			\textbf{0g Offset} & \multicolumn{5}{c||}{$\pm0.04\,\text{g}$} & \multicolumn{4}{c|}{$\pm0.06\,\text{g}$}\\ \hline
+			
+			\textbf{Noise} & \multicolumn{5}{c||}{$\pm1.8\,\text{mg-rms}$} & \multicolumn{4}{c|}{Low Noise Mode: $\pm300\,\frac{\text{\textmu g}}{\sqrt{\textbf{Hz}}}$}\\ \hline
+			
+			\multirowcell{2}{\textbf{Operating Voltage} $V_\text{s}$/$V_\text{DD}$} & \textbf{Min} & \multicolumn{3}{c|}{\textbf{Typical}} & \textbf{Max} & \textbf{Min} & \multicolumn{2}{c|}{\textbf{Typical}} & \textbf{Max}\\ \cline{2-10}
+			
+			& 1.71\,V & \multicolumn{3}{c|}{3.0\,V} & 3.6\,V & 1.71\,V & \multicolumn{2}{c|}{1.8\,V} & 3.45\,V\\ \hline
+			
+			\textbf{Interface Voltage} $V_\textbf{DDIO}$ & 1.2\,V & \multicolumn{3}{c|}{2.4\,V} & 3.6\,V & 1.71\,V & \multicolumn{2}{c|}{1.8\,V} & 3.45\,V\\ \hline
+			
+			\multirowcell{2}{\textbf{Output Data Rate} (ODR)} & \multicolumn{2}{c|}{\textbf{Min}}& \multicolumn{3}{c||}{\textbf{Max}} & \multicolumn{2}{c|}{\textbf{Min}}& \multicolumn{2}{c|}{\textbf{Max}}\\ \cline{2-10}
+			
+			& \multicolumn{2}{c|}{12.5\,Hz} & \multicolumn{3}{c||}{1600\,Hz} & \multicolumn{2}{c|}{4\,Hz} & \multicolumn{2}{c|}{4000\,Hz}\\ \hline
+			
+			\multirowcell{2}{\textbf{Current Consumption}} & \multicolumn{2}{c|}{\textbf{Accelerometer}} & \textbf{Gyroscope} & \textbf{Both}(On) & \textbf{None}(Stby) & \textbf{Accelerometer} & \textbf{Gyroscope} & \textbf{Both}(On) & \textbf{None}(Stby)\\ \cline{2-10}
+			
+			& \multicolumn{2}{c|}{300\,\textmu A} & 900\,\textmu A & 990,\textmu & 10\,\textmu A & 0.45\,mA & 3.2\,mA & 3.4\,mA & 1.6\,mA\\ \hline
+			
+			\multirowcell{2}{\textbf{Power Consumption}} & \multicolumn{5}{c||}{\textbf{For Typical $V_\text{DD}=3.0\,$V}} & \multicolumn{4}{c|}{\textbf{For Typical $V_\text{DD}=1.88\,$V}}\\ \cline{2-10}
+			
+			& \multicolumn{2}{c|}{0.90\,mW} & 2.70\,mW & 2.97\,mW & 0.03\,mW & 0.81\,mW & 5.76\,mW & 6.12\,mW & 2.88\,mW\\ \hline
+			
+			\textbf{Temperature Range} & \multicolumn{5}{c||}{-40\,...\,+85\,°C} & \multicolumn{4}{c||}{-40\,...\,+85\,°C}\\ \hline\hline 
+			
+			\rowcolor{light grey} $Gyro Specs$ & \multicolumn{9}{c||}{}\\ \hline\hline
+			
+			\textbf{Measurement Range} & 125\,$\frac{\text{deg}}{\text{s}}$ & 250\,$\frac{\text{deg}}{\text{s}}$ & 500\,$\frac{\text{deg}}{\text{s}}$ & 1000\,$\frac{\text{deg}}{\text{s}}$ & 2000\,$\frac{\text{deg}}{\text{s}}$ & 250\,$\frac{\text{deg}}{\text{s}}$ & 500\,$\frac{\text{deg}}{\text{s}}$ & 1000\,$\frac{\text{deg}}{\text{s}}$ & 2000\,$\frac{\text{deg}}{\text{s}}$\\ \hline
+			
+			\textbf{Sensitivity} & 262.4\,$\frac{\text{LSB}}{\frac{\text{deg}}{\text{s}}}$ & 131.2\,$\frac{\text{LSB}}{\frac{\text{deg}}{\text{s}}}$ & 65.6\,$\frac{\text{LSB}}{\frac{\text{deg}}{\text{s}}}$ & 32.8\,$\frac{\text{LSB}}{\frac{\text{deg}}{\text{s}}}$ & 16.4\,$\frac{\text{LSB}}{\frac{\text{deg}}{\text{s}}}$ & 131\,$\frac{\text{LSB}}{\frac{\text{deg}}{\text{s}}}$ & 65.5\,$\frac{\text{LSB}}{\frac{\text{deg}}{\text{s}}}$ & 32.4\,$\frac{\text{LSB}}{\frac{\text{deg}}{\text{s}}}$ & 16.4\,$\frac{\text{LSB}}{\frac{\text{deg}}{\text{s}}}$\\ \hline
+			
+			\makecell{\textbf{Sensitivity Change}\\\textbf{Due to temperature}} & \multicolumn{5}{c||}{$\pm0.02\,\frac{\%}{°\text{C}}$} & \multicolumn{4}{c|}{$\pm3\,\%$\tablefootnote[1]{maximum absolute offset}} \\ \hline
+			
+			\textbf{Zero-rate Offset} & \multicolumn{5}{c||}{$\pm3\frac{\text{deg}}{\text{s}}$} & \multicolumn{4}{c|}{$\pm5\frac{\text{deg}}{\text{s}}$} \\ \hline
+			
+			\textbf{Noise} & \multicolumn{5}{c||}{$0.07\frac{\text{deg}}{\text{s}}$-rms} & \multicolumn{4}{c|}{$\pm0.01\frac{\text{deg}}{\text{s}}$-rms} \\ \hline
+		\end{tabular}
+	\end{adjustbox}
+\end{center}
+
+
+\begin{sidewaystable}
+	\captionof{table}{Inertial Measurement Unit(IMU) characteristics Nr.2}	
+	\label{tab:sensor_imu2}
+	\begin{adjustbox}{width=1.05\textwidth}		 
+		\begin{tabular}{|r||c|c|c|c|c|c|c|c||c|c|c|c|c|c|c|c|c|} \hline		
+			& \multicolumn{8}{c||}{\textbf{BMI160}} & \multicolumn{9}{c|}{\textbf{MPU6500}}\\ \hline
+			
+			\rowcolor{light grey} $Accelerometer Specs$ & \multicolumn{17}{c|}{}\\ \hline \hline
+			
+			\textbf{Measurement Range} & \multicolumn{2}{c|}{2\,g} & \multicolumn{2}{c|}{4\,g} & \multicolumn{2}{c|}{8\,g} & \multicolumn{2}{c||}{16\,g} & \multicolumn{2}{c|}{2\,g} & \multicolumn{2}{c|}{4\,g} & \multicolumn{2}{c|}{8\,g} & \multicolumn{2}{c|}{16\,g} & 32\,g\\ \hline
+			
+			\textbf{Output Resolution} & \multicolumn{8}{c||}{16\,bits} & \multicolumn{9}{c|}{16\,bits}\\ \hline
+			
+			\textbf{Sensitivity} (Typical) & \multicolumn{2}{c|}{16384\,$\frac{\text{LSB}}{\text{g}}$} & \multicolumn{2}{c|}{8912\,$\frac{\text{LSB}}{\text{g}}$} & \multicolumn{2}{c|}{4096\,$\frac{\text{LSB}}{\text{g}}$} & \multicolumn{2}{c||}{2048\,$\frac{\text{LSB}}{\text{g}}$} & \multicolumn{2}{c|}{16384\,$\frac{\text{LSB}}{\text{g}}$} & \multicolumn{2}{c|}{8192\,$\frac{\text{LSB}}{\text{g}}$} & \multicolumn{2}{c|}{4096\,$\frac{\text{LSB}}{\text{g}}$} & \multicolumn{2}{c|}{2048\,$\frac{\text{LSB}}{\text{g}}$} & 1024\,g\\ \hline
+			
+			\shortstack[r]{\textbf{Sensitivity change} \\ \textbf{due to temperature}} & \multicolumn{8}{c||}{$\pm0.005\,\frac{\%}{\text{°C}}$} & \multicolumn{9}{c|}{$\pm0.01\,\frac{\%}{\text{°C}}$} \\ \hline
+			
+			\textbf{0g Offset} & \multicolumn{8}{c||}{$\pm20$\,mg} & \multicolumn{9}{c|}{$\pm10$\,mg} \\ \hline
+			
+			\multirowcell{2}{\textbf{Noise}} & \multicolumn{4}{c|}{\textbf{x and y-axis}} & \multicolumn{4}{c||}{\textbf{z-axis}} & \multicolumn{9}{c|}{\textbf{All axis}} \\ \hline
+			
+			& \multicolumn{4}{c|}{0.65\,mg-rms} & \multicolumn{4}{c||}{0.70\,mg-rms} & \multicolumn{6}{c|}{0.70\,mg-rms} & \multicolumn{2}{c|}{0.80\,mg-rms} & 1.1\,mg-rms \\ \hline
+			
+			\multirowcell{2}{\textbf{Operating Voltage} $V_\text{s}$/$V_\text{DD}$} & \multicolumn{2}{c|}{\textbf{Min}} & \multicolumn{4}{c|}{\textbf{Typical}} & \multicolumn{2}{c||}{\textbf{Max}} & \multicolumn{2}{c|}{\textbf{Min}} & \multicolumn{4}{c|}{\textbf{Typical}} & \multicolumn{3}{c|}{\textbf{Max}}\\ \cline{2-18}
+			
+			& \multicolumn{2}{c|}{1.71\,V} & \multicolumn{4}{c|}{1,8\,V} & \multicolumn{2}{c||}{3.6\,V} & \multicolumn{2}{c|}{1.71\,V} & \multicolumn{4}{c|}{1.8\,V} & \multicolumn{3}{c|}{3.6\,V}\\ \hline
+			
+			\textbf{Interface Voltage} $V_\textbf{DDIO}$ & \multicolumn{2}{c|}{1.71\,V} & \multicolumn{4}{c|}{1,8\,V} & \multicolumn{2}{c||}{3.6\,V} & \multicolumn{2}{c|}{1.08\,V} & \multicolumn{4}{c|}{1.8\,V} & \multicolumn{3}{c|}{3.6\,V}\\ \hline
+			
+			\multirowcell{2}{\textbf{Output Data Rate} (ODR)} & \multicolumn{4}{c|}{\textbf{Min}}& \multicolumn{4}{c||}{\textbf{Max}} & \multicolumn{4}{c|}{\textbf{Low Noise Mode} (LNM)}& \multicolumn{5}{c|}{\textbf{Low Power Mode} (LPM)}\\ \cline{2-18}
+			
+			& \multicolumn{4}{c|}{1.5625\,Hz} & \multicolumn{4}{c||}{32000\,Hz} & \multicolumn{2}{c|}{\textbf{Min:} 12.5\,Hz} & \multicolumn{2}{c|}{\textbf{Max:} 6400\,Hz} & \multicolumn{2}{c|}{\textbf{Min:} 1.5625\,Hz} & \multicolumn{3}{c|}{\textbf{Max:} 400\,Hz}\\ \hline
+			
+			\multirowcell{2}{\textbf{Current Consumption}} & \multicolumn{2}{c|}{\textbf{3-Axis Accel.}} & \multicolumn{2}{c|}{\textbf{3-Axis Gyro}} & \multicolumn{2}{c|}{\textbf{6-Axis Accel. + Gyro}} & \multicolumn{2}{c||}{\textbf{Sleep Mode}} & \multicolumn{2}{c|}{\textbf{6-Axis Accel. + Gyro}\tablefootnote[2]{At 50\,Hz ODR\label{note:50_ODR}}} & \textbf{3-Axis Accel.}\footref{note:50_ODR} & \textbf{3-Axis Gyro}\footref{note:50_ODR} & \multicolumn{2}{c|}{\textbf{6-Axis Accel. + Gyro}\tablefootnote[3]{At 200\,Hz ODR\label{note:200_ODR}}} & \textbf{3-Axis Accel.}\footref{note:200_ODR} & \textbf{3-Axis Gyro}\footref{note:200_ODR} & \textbf{Sleep Mode}\\ \cline{2-18}
+			
+			& \multicolumn{2}{c|}{0.28\,mA} & \multicolumn{2}{c|}{0.73\,mA} & \multicolumn{2}{c|}{0.88\,mA} & \multicolumn{2}{c||}{0.75\,\textmu A} & \multicolumn{2}{c|}{420\,\textmu A} & 120\,\textmu A & 360\,\textmu A & \multicolumn{2}{c|}{220\,\textmu A} & 67\,\textmu A & 210\,\textmu A & 2.2\,\textmu A \\ \hline
+			
+			\multirowcell{2}{\textbf{Power Consumption}} & \multicolumn{8}{c||}{\textbf{For $V_\text{DD}=3.3\,$V}} & \multicolumn{9}{c|}{\textbf{For $V_\text{DD}=3.3\,$V}}\\ \cline{2-18}
+			
+			& \multicolumn{2}{c|}{0.924\,mW} & \multicolumn{2}{c|}{2.409\,mW} & \multicolumn{2}{c|}{2.904\,mW} & \multicolumn{2}{c||}{24.75\,\textmu W} & \multicolumn{2}{c|}{1,386\,mW} & 396\,\textmu W & 1.118\,mW & \multicolumn{2}{c|}{726\,\textmu W} & 221.1\,\textmu W & 693\,\textmu W & 7.26\,\textmu W \\ \hline
+			
+			\textbf{Temperature Range} & \multicolumn{8}{c||}{-40\,...\,+85\,°C} & \multicolumn{9}{c|}{-40\,...\,+85\,°C}\\ \hline\hline 
+			
+			\rowcolor{light grey} $Gyro Specs$ & \multicolumn{17}{c|}{} \\ \hline\hline
+			
+			\textbf{Measurement Range} & 15.625\,$\frac{\text{deg}}{\text{s}}$ & 31.25\,$\frac{\text{deg}}{\text{s}}$ & 62.5\,$\frac{\text{deg}}{\text{s}}$ & 125\,$\frac{\text{deg}}{\text{s}}$ & 250\,$\frac{\text{deg}}{\text{s}}$ & 500\,$\frac{\text{deg}}{\text{s}}$ & 1000\,$\frac{\text{deg}}{\text{s}}$ & 2000\,$\frac{\text{deg}}{\text{s}}$ & 15.625\,$\frac{\text{deg}}{\text{s}}$ & 31.25\,$\frac{\text{deg}}{\text{s}}$ & 62.5\,$\frac{\text{deg}}{\text{s}}$ & 125\,$\frac{\text{deg}}{\text{s}}$ & 250\,$\frac{\text{deg}}{\text{s}}$ & 500\,$\frac{\text{deg}}{\text{s}}$ & 1000\,$\frac{\text{deg}}{\text{s}}$ & 2000\,$\frac{\text{deg}}{\text{s}}$ & 4000\,$\frac{\text{deg}}{\text{s}}$ \\ \hline
+			
+			\textbf{Sensitivity} & 2089.2\,$\frac{\text{LSB}}{\frac{\text{deg}}{\text{s}}}$ & 1048.6\,$\frac{\text{LSB}}{\frac{\text{deg}}{\text{s}}}$ & 524.3\,$\frac{\text{LSB}}{\frac{\text{deg}}{\text{s}}}$ & 262\,$\frac{\text{LSB}}{\frac{\text{deg}}{\text{s}}}$ & 131\,$\frac{\text{LSB}}{\frac{\text{deg}}{\text{s}}}$ & 65.5\,$\frac{\text{LSB}}{\frac{\text{deg}}{\text{s}}}$ & 32.8\,$\frac{\text{LSB}}{\frac{\text{deg}}{\text{s}}}$ & 16.4\,$\frac{\text{LSB}}{\frac{\text{deg}}{\text{s}}}$ & 2089.2\,$\frac{\text{LSB}}{\frac{\text{deg}}{\text{s}}}$ & 1048.6\,$\frac{\text{LSB}}{\frac{\text{deg}}{\text{s}}}$ & 524.3\,$\frac{\text{LSB}}{\frac{\text{deg}}{\text{s}}}$ & 262\,$\frac{\text{LSB}}{\frac{\text{deg}}{\text{s}}}$ & 131\,$\frac{\text{LSB}}{\frac{\text{deg}}{\text{s}}}$ & 65.5\,$\frac{\text{LSB}}{\frac{\text{deg}}{\text{s}}}$ & 32.8\,$\frac{\text{LSB}}{\frac{\text{deg}}{\text{s}}}$ & 16.4\,$\frac{\text{LSB}}{\frac{\text{deg}}{\text{s}}}$ & 8.2\,$\frac{\text{LSB}}{\frac{\text{deg}}{\text{s}}}$ \\ \hline
+			
+			\shortstack[r]{\textbf{Sensitivity Change} \\ \textbf{Due to temperature}} & \multicolumn{8}{c||}{$\pm0.005\,\frac{\%}{°\text{C}}$} & \multicolumn{9}{c|}{$\pm0.01\,\frac{\%}{°\text{C}}$} \\ \hline
+			
+			\textbf{Zero-rate Offset} & \multicolumn{8}{c||}{$\pm0.5\frac{\text{deg}}{\text{s}}$} & \multicolumn{9}{c|}{$\pm0.3\frac{\text{deg}}{\text{s}}$} \\ \hline
+			
+			\textbf{Noise} & \multicolumn{8}{c||}{$0.028\frac{\text{deg}}{\text{s}}$-rms} & \multicolumn{9}{c|}{$\pm0.038\frac{\text{deg}}{\text{s}}$-rms} \\ \hline
+		\end{tabular}
+	\end{adjustbox}
+\end{sidewaystable}
+
+
+
 \begin{sidewaystable}
 	\captionof{table}{Accelerometer characteristics}	
 	\label{tab:sensor_acc}
@@ -585,7 +707,7 @@ For those reasons, the ESP32-S3-Vroom-N4-1u was chosen as the microcontroller fo
 				 
 				\textbf{0g Offset} & \multicolumn{2}{c|}{$\pm0.15\,\text{g}$} & \multicolumn{2}{c||}{$\pm0.25\,\text{g}$} & \multicolumn{4}{c||}{$\pm0.35\,\text{g}$} & \multicolumn{4}{c|}{$\pm0.025\,\text{g}$} \\ \hline
 				
-				\textbf{Noise} & \multicolumn{2}{c|}{$\pm0.75\,\text{LBS rms}$} & \multicolumn{2}{c||}{$\pm1.10\,\text{LBS rms}$} & \multicolumn{4}{c||}{$\pm1.10\,\text{LBS rms}$} & \multicolumn{4}{c|}{$\pm0.70\,\text{LBS rms}$} \\ \hline
+				\textbf{Noise} & \multicolumn{2}{c|}{$\pm0.75\,\text{LBS-rms}$} & \multicolumn{2}{c||}{$\pm1.10\,\text{LBS-rms}$} & \multicolumn{4}{c||}{$\pm1.10\,\text{LBS-rms}$} & \multicolumn{4}{c|}{$\pm0.70\,\text{LBS-rms}$} \\ \hline
 					
 				\multirowcell{2}{\textbf{Operating Voltage} $V_\text{s}$/$V_\text{DD}$} & \textbf{Min} & \multicolumn{2}{c|}{\textbf{Typical}} & \textbf{Max} & \textbf{Min} & \multicolumn{2}{c|}{\textbf{Typical}} & \textbf{Max} & \textbf{Min} & \multicolumn{2}{c|}{\textbf{Typical}} & \textbf{Max} \\ \cline{2-13}
 				
@@ -612,63 +734,67 @@ For those reasons, the ESP32-S3-Vroom-N4-1u was chosen as the microcontroller fo
 	\end{adjustbox}
 \end{sidewaystable}
 
-\begin{center}
-	\captionof{table}{Inertial Measurement Unit(IMU) characteristics}	
-	\label{tab:sensor_imu1}
-	\begin{adjustbox}{width=1.15\textwidth}		 
-		\begin{tabular}{|r||c|c|c|c|c||c|c|c|c|} \hline		
-			 & \multicolumn{5}{c||}{\textbf{BMI160}} & \multicolumn{4}{c|}{\textbf{MPU6500}}\\ \hline
+
+
+\begin{sidewaystable}
+	\captionof{table}{Pressure sensor characteristics}\footnote{psi values are rounded to a precision of one tenth}	
+	\label{tab:sensor_pss}
+	\begin{adjustbox}{width=1.05\textwidth}
+		\begin{tabular}{|r||c|c|c||c|c|c||c|c|c||c|c|c|} \hline		
+			& \multicolumn{3}{c||}{\textbf{HSCMAND015PASA5}} & \multicolumn{3}{c||}{\textbf{MS561101BA03-50}} & \multicolumn{3}{c|}{\textbf{MPL3115A2ST1}\footnote[1]{Features an altimeter mode}} & \multicolumn{3}{c|}{\textbf{MS560702BA03-50}} \\ \hline \hline
 			
-			\rowcolor{light grey} $Accelerometer Specs$ & \multicolumn{5}{c}{} & \multicolumn{4}{c}{} \\ \hline \hline
+			\rowcolor{light grey} $Pressure sensor Specs$ & \multicolumn{12}{c|}{} \\ \hline \hline
 			
-			\textbf{Measurement Range} & 2\,g & 4\,g & 8\,g & \multicolumn{2}{c||}{16\,g}& 2\,g & 4\,g & 8\,g & 16\,g\\ \hline
+			\textbf{Measurement Range} & $1.6\,\textbf{mbara} - 1.0\,\textbf{bara}$ & $160\,\textbf{Pa} - 1\,\textbf{MPa}$ & $0.5\,\textbf{psi} - 14.5\,\textbf{psi}$
+			& $450\,\textbf{mbara} - 1.1\,\textbf{bara}$ & $45\,\textbf{kPa} - 110\,\textbf{kPa}$\footnote[2]{Extended usable range of 1\,kPa - 120\,kPa. The ADC shows linear behaviour in the above mentioned range, but can be extended to this range with custom calibrations.} & $6.5\,\textbf{psi} - 16.0\,\textbf{psi}$
+			& $500\,\textbf{mbara} - 1.1\,\textbf{bara}$ & $50\,\textbf{kPa} - 110\,\textbf{kPa}$\footnote[3]{Extended usable range of 20\,kPa - 120\,kPa with similar ADC behaviour to the MS561101BA03-50} & $7.3\,\textbf{psi} - 16.0\,\textbf{psi}$
+			& $300\,\textbf{mbara} - 1,1\,\textbf{bara}$ & $30\,\textbf{Pa} - 110\,\textbf{kPa}$\footnote[4]{Extended usable range of 1\,kPa - 200\,kPa with similar ADC behaviour to the MS561101BA03-50} & $4.4\,\textbf{psi} - 16.0\,\textbf{psi}$ \\ \hline
 			
-			\textbf{Output Resolution} & \multicolumn{5}{c||}{16\,bits} & \multicolumn{4}{c|}{16\,bits}\\ \hline
+			\textbf{Pressure Accuracy} & \multicolumn{3}{c||}{$\pm0.25\,\%$} & \multicolumn{3}{c||}{$\pm0.25\,$kPa} & \multicolumn{3}{c||}{$\pm0.4\,$kPa} & \multicolumn{3}{c|}{$\pm0.15\,$kPa} \\ \hline
 			
-			\textbf{Sensitivity} (Typical) & 16384\,$\frac{\text{LSB}}{\text{g}}$ & 8912\,$\frac{\text{LSB}}{\text{g}}$ & 4096\,$\frac{\text{LSB}}{\text{g}}$ & \multicolumn{2}{c||}{2048\,$\frac{\text{LSB}}{\text{g}}$} & 16384\,$\frac{\text{LSB}}{\text{g}}$ & 8192\,$\frac{\text{LSB}}{\text{g}}$ & 4096\,$\frac{\text{LSB}}{\text{g}}$ & 2048\,$\frac{\text{LSB}}{\text{g}}$\\ \hline
+			\textbf{Output Resolution} & \multicolumn{3}{c||}{12\,bits} & \multicolumn{3}{c||}{8 - 12\,bits} & \multicolumn{3}{c||}{20\,bits} & \multicolumn{3}{c|}{8 - 12\,bits} \\ \hline
 			
-			\multirowcell{2}{\shortstack[r]{\textbf{Sensitivity change}\\ \textbf{due to temperature}}} & \textbf{x} & \multicolumn{2}{c|}{\textbf{y}} & \multicolumn{2}{c||}{\textbf{z}} & \textbf{x} & \multicolumn{2}{c|}{\textbf{y}} & \textbf{z}\\ \cline{2-10}
+			\textbf{Long term stability} & \multicolumn{3}{c||}{N/A} & \multicolumn{3}{c||}{$\pm0.1\,\frac{\text{kPa}}{\text{yr}}$} & \multicolumn{3}{c||}{$\pm0.1\,\frac{\text{kPa}}{\text{yr}}$} & \multicolumn{3}{c|}{$\pm0.1\,\frac{\text{kPa}}{\text{yr}}$} \\ \hline
 			
-			& \multicolumn{5}{c||}{$\pm0.03\,\frac{\%}{\text{°\text{C}}}$} & \multicolumn{4}{c|}{$\pm0.026\,\frac{\%}{\text{°\text{C}}}$}\\ \hline
+			\textbf{Max Pressure}\footnote[4]{Referring to the most pressure it can sustain without breaking} & \multicolumn{3}{c||}{N/A} & 6\,bar & 600\,kPa & 87.0\,psi & 5\,bar & 500\,kPa & 72.5\,kPa & 6\,bar & 600\,kPa & 87.0\,psi \\ \hline
 			
-			\textbf{0g Offset} & \multicolumn{5}{c||}{$\pm0.04\,\text{g}$} & \multicolumn{4}{c|}{$\pm0.06\,\text{g}$}\\ \hline
+			\textbf{Noise} & \multicolumn{3}{c||}{N/A} & \multicolumn{2}{c|}{1.2 (4096), 1.8 (2048), 2.7 (1024), 4.2 (512), 6.5 (256)} & Pa-rms (OSR) & \multicolumn{2}{c|}{19 (1) 1.5 (128)} & Pa-rms (OSR) & \multicolumn{2}{c|}{2.4 (4096), 3.6 (2048), 5.4 (1024), 8.4 (512), 13.0 (256)} & Pa-rms (OSR) \\ \hline
 			
-			\textbf{Noise} & \multicolumn{5}{c||}{$\pm1.8\,\text{mg rms}$} & \multicolumn{4}{c|}{Low Noise Mode: $\pm300\,\frac{\text{\textmu g}}{\sqrt{\textbf{Hz}}}$}\\ \hline
+			\multirowcell{2}{\textbf{Operating Voltage} $V_\text{s}$/$V_\text{DD}$} & \textbf{Min} & \textbf{Typical} & \textbf{Max} & \textbf{Min} & \textbf{Typical} & \textbf{Max} & \textbf{Min} & \textbf{Typical} & \textbf{Max} & \textbf{Min} & \textbf{Typical} & \textbf{Max} \\ \cline{2-13}
 			
-			\multirowcell{2}{\textbf{Operating Voltage} $V_\text{s}$/$V_\text{DD}$} & \textbf{Min} & \multicolumn{3}{c|}{\textbf{Typical}} & \textbf{Max} & \textbf{Min} & \multicolumn{2}{c|}{\textbf{Typical}} & \textbf{Max}\\ \cline{2-10}
+			& 3.0\,V & 3,3\,V & 3.6\,V & 1.8\,V & 3.0\,V & 3.6\,V & 1.95\,V & 2.5\,V & 3.6\,V & 1.8\,V & 3.0\,V & 3.6\,V \\ \hline
 			
-			& 1.71\,V & \multicolumn{3}{c|}{3.0\,V} & 3.6\,V & 1.71\,V & \multicolumn{2}{c|}{1.8\,V} & 3.45\,V\\ \hline
+			\textbf{Interface Voltage} $V_\textbf{DDIO}$ & \multicolumn{3}{c||}{N/A} & \multicolumn{3}{c||}{N/A} & 1.62\,V & 1.8\,V & 3.6\,V & \multicolumn{3}{c|}{N/A} \\ \hline
 			
-			\textbf{Interface Voltage} $V_\textbf{DDIO}$ & 1.2\,V & \multicolumn{3}{c|}{2.4\,V} & 3.6\,V & 1.71\,V & \multicolumn{2}{c|}{1.8\,V} & 3.45\,V\\ \hline
+			\multirowcell{2}{\textbf{Output Data Rate} (ODR)} & \textbf{SPI} (Max) & \multicolumn{2}{c||}{\textbf{I2C} (Max)} & \textbf{SPI} (Max) & \multicolumn{2}{c||}{\textbf{I2C} (Max)} & \textbf{I2C $f_\text{SCL}1$} (with $C_\text{Bus} = 20\,$pF)& \multicolumn{2}{c||}{\textbf{I2C $f_\text{SCL}2$} (with $C_\text{Bus} = 400\,$pF)} & \textbf{SPI} (Max) & \multicolumn{2}{c|}{\textbf{I2C} (Max)} \\ \cline{2-13}
 			
-			\multirowcell{2}{\textbf{Output Data Rate} (ODR)} & \multicolumn{2}{c|}{\textbf{Min}}& \multicolumn{3}{c||}{\textbf{Max}} & \multicolumn{2}{c|}{\textbf{Min}}& \multicolumn{2}{c|}{\textbf{Max}}\\ \cline{2-10}
+			& 800\,kHz & \multicolumn{2}{c||}{400\,kHz} & 20\,MHz & \multicolumn{2}{c||}{400\,kHz} & 400\,kHz & \multicolumn{2}{c||}{4\,MHz} & 20\,MHz & \multicolumn{2}{c|}{400\,kHz}  \\ \hline
 			
-			& \multicolumn{2}{c|}{12.5\,Hz} & \multicolumn{3}{c||}{1600\,Hz} & \multicolumn{2}{c|}{4\,Hz} & \multicolumn{2}{c||}{4000\,Hz}\\ \hline
+			\multirowcell{2}{\textbf{Current Consumption}} & \textbf{Supply} (typical) & \multicolumn{2}{c||}{\textbf{Supply} (max)} & \textbf{Supply} & \textbf{Peak} & \textbf{Standby} & \textbf{Operational} & \textbf{Peak} & \textbf{Standby} & \textbf{Supply} & \textbf{Peak} & \textbf{Standby}  \\ \cline{2-13}
 			
-			\multirowcell{2}{\textbf{Current Consumption}} & \multicolumn{2}{c|}{\textbf{Accelerometer}} & \textbf{Gyroscope} & \textbf{Both}(On) & \textbf{None}(Stby) & \textbf{Accelerometer} & \textbf{Gyroscope} & \textbf{Both}(On) & \textbf{None}(Stby)\\ \cline{2-10}
+			& 3.1\,mA & \multicolumn{2}{c||}{3.9\,mA} & 12.5\,\textmu A (4096)\footnote[5]{Maximum operational supply. The Consumption is dependent on OSR.\label{note:current_OSR}} & 1.4\,mA & 0.14\,\textmu A & 265\,\textmu A\footref{note:current_OSR} & 2\,mA & 2\,\textmu A & 12.5\,\textmu A\footref{note:current_OSR} & 1.4\,mA & 0.14\,\textmu A \\ \hline
 			
-			& \multicolumn{2}{c|}{300\,\textmu A} & 900\,\textmu A & 990,\textmu & 10\,\textmu A & 0.45\,mA & 3.2\,mA & 3.4\,mA & 1.6\,mA\\ \hline
+			\multirowcell{2}{\textbf{Power Consumption}} & \multicolumn{3}{c||}{\textbf{For $V_\text{DD} = 3.3\,$V}} & \multicolumn{3}{c||}{\textbf{For $V_\text{DD} = 3.3\,$V}} & \multicolumn{3}{c||}{\textbf{For $V_\text{DD} = 3.3\,$V}} & \multicolumn{3}{c|}{\textbf{For $V_\text{DD} = 3.3\,$V}} \\ \cline{2-13}
 			
-			\multirowcell{2}{\textbf{Power Consumption}} & \multicolumn{5}{c|}{\textbf{For Typical $V_\text{DD}=3.0\,$V}} & \multicolumn{4}{c|}{\textbf{For Typical $V_\text{DD}=1.88\,$V}}\\ \cline{2-10}
+			& 10.23\,mW & \multicolumn{2}{c||}{12.87\,mW} & 42.24\,\textmu W & 4.62\,mW & 0.462\,\textmu W & 844.8\,\textmu W & 6.6\,mW & 6.6\,\textmu W & 41.25\,\textmu W & 4.62\,mW & 0.462\,\textmu W\\ \hline
 			
-			& \multicolumn{2}{c|}{0.90\,mW} & 2.70\,mW & 2.97\,mW & 0.03\,mW & 0.81\,mW & 5.76\,mW & 6.12\,mW & 2.88\,mW\\ \hline
+			\textbf{Temperature Range} & \multicolumn{3}{c||}{-20\,...\,+85\,°C} & \multicolumn{3}{c||}{-40\,...\,+85\,°C} & \multicolumn{3}{c||}{-40\,...\,+85\,°C} & \multicolumn{3}{c|}{-40\,...\,+85\,°C}\\ \hline \hline
 			
-			\textbf{Temperature Range} & \multicolumn{5}{c||}{-40\,...\,+85\,°C} & \multicolumn{4}{c||}{-40\,...\,+85\,°C}\\ \hline\hline 
+			\rowcolor{light grey} $Temperature sensor Specs$ & \multicolumn{12}{c|}{} \\ \hline \hline
 			
-			\rowcolor{light grey} $Gyro Specs$ & \multicolumn{5}{c||}{} & \multicolumn{4}{c|}{} \\ \hline\hline
+			\textbf{Measurement Range} & \multicolumn{3}{c||}{} & \multicolumn{3}{c||}{-40\,...\,+85\,°C} & \multicolumn{3}{c||}{-40\,...\,+85\,°C} & \multicolumn{3}{c|}{-40\,...\,+85\,°C} \\ \cline{5-13}
 			
-			\textbf{Measurement Range} & 125\,$\frac{\text{deg}}{\text{s}}$ & 250\,$\frac{\text{deg}}{\text{s}}$ & 500\,$\frac{\text{deg}}{\text{s}}$ & 1000\,$\frac{\text{deg}}{\text{s}}$ & 2000\,$\frac{\text{deg}}{\text{s}}$ & 250\,$\frac{\text{deg}}{\text{s}}$ & 500\,$\frac{\text{deg}}{\text{s}}$ & 1000\,$\frac{\text{deg}}{\text{s}}$ & 2000\,$\frac{\text{deg}}{\text{s}}$\\ \hline
+			\multirowcell{2}{\textbf{Accuracy}} & \multicolumn{3}{c||}{} & \textbf{Min} & \textbf{-20\,...\,+85\,°C} & \textbf{Max} & \multicolumn{3}{c||}{Max Offset} & \textbf{Min} & \textbf{-20\,...\,+85\,°C} & \textbf{Max} \\ \cline{5-13}
 			
-			\textbf{Sensitivity} & 262.4\,$\frac{\text{LSB}}{\frac{\text{deg}}{\text{s}}}$ & 131.2\,$\frac{\text{LSB}}{\frac{\text{deg}}{\text{s}}}$ & 65.6\,$\frac{\text{LSB}}{\frac{\text{deg}}{\text{s}}}$ & 32.8\,$\frac{\text{LSB}}{\frac{\text{deg}}{\text{s}}}$ & 16.4\,$\frac{\text{LSB}}{\frac{\text{deg}}{\text{s}}}$ & 131\,$\frac{\text{LSB}}{\frac{\text{deg}}{\text{s}}}$ & 65.5\,$\frac{\text{LSB}}{\frac{\text{deg}}{\text{s}}}$ & 32.4\,$\frac{\text{LSB}}{\frac{\text{deg}}{\text{s}}}$ & 16.4\,$\frac{\text{LSB}}{\frac{\text{deg}}{\text{s}}}$\\ \hline
+			& \multicolumn{3}{c||}{} & -0.8\,°C & $\pm$2.0\,°C & +0.8\,°C & \multicolumn{3}{c||}{$\pm$3\,°C} & -0.8\,°C & $\pm$2.0\,°C & +0.8\,°C \\ \cline{5-13}
 			
-			\makecell{\textbf{Sensitivity Change}\\\textbf{Due to temperature}} & \multicolumn{5}{c||}{$\pm0.02\,\frac{\%}{°\text{C}}$} & \multicolumn{4}{c|}{$\pm3\,\%$\tablefootnote{maximum absolute offset}} \\ \hline
+			\textbf{Resolution} & \multicolumn{3}{c||}{} & \multicolumn{3}{c||}{24\,bits} & \multicolumn{3}{c||}{12\,bits} & \multicolumn{3}{c|}{24\,bits} \\ \cline{5-13}
 			
-			\textbf{Zero-rate Offset} & \multicolumn{5}{c||}{$\pm3\frac{\text{deg}}{\text{s}}$} & \multicolumn{4}{c||}{$\pm5\frac{\text{deg}}{\text{s}}$} \\ \hline
-			
-			\textbf{Noise} & \multicolumn{5}{c||}{$0.07\frac{\text{deg}}{\text{s}}$ rms} & \multicolumn{4}{c||}{$\pm0.01\frac{\text{deg}}{\text{s}}$ rms} \\ \hline
+			\textbf{Noise} & \multicolumn{3}{c||}{} & \multicolumn{2}{c|}{0.002 (4096), 0.003 (2048), 0.005 (1024), 0.008 (512), 0.012 (256)} & °C (OSR) & \multicolumn{3}{c||}{N/A} & \multicolumn{2}{c|}{0.002 (4096), 0.003 (2048), 0.005 (1024), 0.008 (512), 0.012 (256)} & °C (OSR) \\ \hline			
 		\end{tabular}
 	\end{adjustbox}
-\end{center}
+\end{sidewaystable}
+
 
 
 \end{document}
