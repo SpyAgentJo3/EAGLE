@@ -122,6 +122,17 @@ sorting=none
 \setcounter{page}{1}
 \pagenumbering{Roman}
 
+\chapter*{Eidesstattliche Erklärung}
+Hiermit versichere ich, dass ich die vorliegende Arbeit selbstständig und unter aus
+schließlicher Verwendung der angegebenen Literatur und Hilfsmittel erstellt habe. Die
+Arbeit wurde bisher in gleicher oder ähnlicher Form keiner anderen Prüfungsbehörde
+vorgelegt und nicht veröffentlicht.\\\\
+
+\noindent Ort, Datum: \dotfill \hspace{3mm} Unterschrift: \dotfill 
+
+\newpage
+
+
 \chapter*{Abstract}
 The development of the "Electronic Actuation \& Guidance for Landing and Elevation" (EAGLE) system is a project developed in cooperation with the student rocketry association "Spaceflight Rocketry Gießen e.V." as part of its self-developed on-board computer called "Advances System for Control Electronics, Navigation and Tracking" (ASCENT). Therefore, I would like to thank Spaceflight Rocketry Gießen for giving me the opportunity to pursue the project with their equipment and funding.\\
 EAGLE is a avionics module which uses real-time sensor data to accurately estimate the rockets position and attitude as well as detecting mission critical waypoints (such as apogee) to deploy the recovery system, perform the staging and subsequent firing of the sustainer's motor and make real-time decisions about an active aerodynamical airbrake system, which accurately limits the maximum altitude to a preset value.\\
@@ -163,6 +174,8 @@ The development process of a printed circuit board for this system according to 
 		\acro{JLU}[JLU]{\dotfill Justus-Liebig-University Giessen}
 		\acro{THM}[THM]{\dotfill Technische Hochschule Mittelhessen}
 		\acro{OSR}[OSR]{\dotfill Oversampling ratio}
+		\acro{MOSFET}[MOSFET]]{\dotfill Metal-oxide-semiconductor field-effect transistor}
+		\acro{ST}[ST]]{\dotfill Schmitt Trigger}
 	\end{acronym}
 	\cleardoublepage
 
@@ -196,9 +209,33 @@ To comply with these objectives, EAGLE will feature a variety of sensors and dea
 
 \newpage
 
-\chapter{Theoretical background and related work}
+
+\chapter{Theoretical basics}
 To illustrate some of the decisions made within the design phase of EAGLE, it is important to first get a basic understanding of the fundamentals of sounding rocket recovery, avionics architecture and PCB design. This chapter deals with said fundamentals and aims to highlight the most important theoretical topics.
 
+\section{Electrical design}
+\subsection{Voltage management (RC circuit)}
+\subsection{Metal-oxide-semiconductor field-effect transistor (MOSFET)}
+\subsection{Inverting Schmitt Trigger}
+
+\section{Software design} 
+
+\subsection{State machines}\label{sec:state_machine}
+State machines or Finite State Machine are a commonly used concept in software engineering and generally describes a system which can only be in one state of a finite number of state at a time. It is a event-driven and reactive system which can change its state based on certain events happening or conditions that are met.\\
+An example for a state machine would be a video, which can have multiple states such as: Paused, playing, stopped and so on. A possible transition between those states would be something like pressing the pause and play button. Pressing the pause button causes a transition from the state "Playing" to the state "Paused". However, while the video is playing it can not be paused or stopped at the same time.\\
+By only having one state be active at a time, it makes both troubleshooting and designing simpler. This is due to the modularization of the software. If a certain state is being executed, it means that if an issue occurs it can only be caused by this specific state. This instantly narrows down the amount of error sources. Additionally, each state can be developed independently as there are no dependencies between states other than the transition conditions. Each state behaves as if it was its own program that is called from a seperate program. It also makes the predictability of a system more reliable, because of the same reason. A smaller program is easier to predict in its behaviour by relying on less complexity and dependencies between systems.\\
+The way state machines are typically implemented is by the use of switch-case statements, where each case is representative of a state. Typically, each case or state has its own running loop that executes a certain function, which is executed when its in the right state, e.g. playing the video. Within a loop there would be a breaking condition, e.g. a pause button press event, which would both end the loop and also set the next state, which would then start a different loop.\\
+State machines do not need to follow a linear stream of states. It is common that certain conditions or transitions can cause jumps in the state machine leaving entire states behind. Similarly, it can be possible to go back to a former state instead of moving forward.
+
+\subsection{PID controllers}
+
+\section{PCB Design}
+
+\section{Communication protocols}
+\subsection{Inter-Integrated Circuit (I2C)}
+\subsection{Universal Asynchronous Receiver-Transmitter (UART)}
+\subsection{Serial Peripheral Interface (SPI)}
+\subsection{Comparison}
 
 \section{Sounding rocket recovery systems}
 The term "sounding rocket" refers to a suborbital class rocket, which usually only goes to hundreds of kilometers in altitude in order to reach space and achieve a certain amount of zero gravity. This results in the vehicle falling back down to earth after a short amount of time in space. Every sounding rocket features some form of recovery since a free-falling rocket at speeds much higher than the speed of sound poses too much of a risk for nearby people and personnel. Whilst modern orbital class rockets are either expendable (e.g. Ariane\,6) or recovered using propulsive landing methods (e.g. SpaceX Falcon\,9), sounding rockets usually rely on parachutes. This is due to the fact, that the main goal of sounding rockets is to provide a short time in free-fall or zero gravity for experiments\cite{DLRsoundingRockets}, which could otherwise not be completed within earth's atmosphere. This means that the main goal is to maximize payload capacity and minimize the complexity and cost. This is usually achieved by relying on a "simpler" architecture than bi-liquid rockets, such as hybrid or solid motors. For simplicity, only solid motors will be discussed.\\
@@ -227,22 +264,18 @@ The flight culminates at apogee, the highest point of the trajectory and the con
 From this point, the rocket falls at a constant speed, which is determined by the size and lift of the drogue parachute. After reaching the target setpoint for main parachute deployment, another mechanism is triggered (e.g. a rope cutter) that causes the drogue parachute to disconnect from the airframe of the rocket such that it only remains connected to the main parachute. This results in the parachute being dragged out and therefore deployed. Afterwards, the rocket glides down at a constant final speed, which will also be the speed with which it touches down on the ground.
 
 
-\section{State machines} \label{sec:state_machine}
-State machines or Finite State Machine are a commonly used concept in software engineering and generally describes a system which can only be in one state of a finite number of state at a time. It is a event-driven and reactive system which can change its state based on certain events happening or conditions that are met.\\
-An example for a state machine would be a video, which can have multiple states such as: Paused, playing, stopped and so on. A possible transition between those states would be something like pressing the pause and play button. Pressing the pause button causes a transition from the state "Playing" to the state "Paused". However, while the video is playing it can not be paused or stopped at the same time.\\
-By only having one state be active at a time, it makes both troubleshooting and designing simpler. This is due to the modularization of the software. If a certain state is being executed, it means that if an issue occurs it can only be caused by this specific state. This instantly narrows down the amount of error sources. Additionally, each state can be developed independently as there are no dependencies between states other than the transition conditions. Each state behaves as if it was its own program that is called from a seperate program. It also makes the predictability of a system more reliable, because of the same reason. A smaller program is easier to predict in its behaviour by relying on less complexity and dependencies between systems.\\
-The way state machines are typically implemented is by the use of switch-case statements, where each case is representative of a state. Typically, each case or state has its own running loop that executes a certain function, which is executed when its in the right state, e.g. playing the video. Within a loop there would be a breaking condition, e.g. a pause button press event, which would both end the loop and also set the next state, which would then start a different loop.\\
-State machines do not need to follow a linear stream of states. It is common that certain conditions or transitions can cause jumps in the state machine leaving entire states behind. Similarly, it can be possible to go back to a former state instead of moving forward.
+
 
 \section{Avionics architecture for recovery systems}
 
-\section{PCB design basics}
-\subsection{Voltage management (RC circuit)}
+\newpage
 
-\section{Communication protocols}
-\subsection{Inter-Integrated Circuit (I2C)}
-\subsection{Universal Asynchronous Receiver-Transmitter (UART)}
-\subsection{Serial Peripheral Interface (SPI)}
+\chapter{Background and related work}
+SPROG is one of many student rocketry teams in Germany alone. However, student rockets and especially the aspect of avionics is not a solved issue. This chaper will highlight the necessity of developing strong and reliable platforms for rocket recovery in the student rocketry sector.
+
+\section{DLR - MORABA}
+
+\section{European student rocketry}
 
 \section{European Rocketry Challenge} \label{sec:euroc}
 The "European Rocketry Challenge" (EuRoC) is an international student rocketry competition hosted and organized by the Portugese Space Agency which was first introduced in 2020. Each year a selection of student teams across ESA member states compete in different categories such as altitudes (3 and 9\,km) or propulsion technologies (solid, hybrid and bi-liquid). Especially propulsion technologies get extra attention in the so called "SRAD" (student researched and developed) classed categories as they showcase the innovation and engineering skills of students with limited funding. This competition has pushed teams to challenge the limits of student rocketry by building e.g. the first ever student-built regeneratively cooled bi-liquid engine in Europe by WARR Rocketry.\\
@@ -385,6 +418,10 @@ Analogous to the boost state, the system can jump into multiple outcomes, in thi
 When in the apogee state, the state machine has the nominal case of detecting main deployment ($5\rightarrow6$). However, there is still a chance that such an event would be missed, in which case the rocket would fall to the ground under drogue parachute, which would cause a relatively high impact speed. In this case, the rocket still needs to be able to inert (unarm) itself, if it survived the impact and therefore needs to be able to detect the landing, which would cause a transition into the landed state ($5\rightarrow7$).\\
 If the vehicle does deploy the main parachute or at least enters state 6, it can only transition into landed as it is the last step in the flight sequence of events.\\
 The events "apogee detected", "main parachute altitude detected" and "landing detected" can each be redundantly triggered by a ground operator command or by timeout. When EAGLE detects liftoff it starts timers which evaluate if an event could have been reached based on timings from simulations. So even if EAGLE was to not detect apogee or main deployment and still managed to survive the impact, a timer would cause the rocket to inert itself. Similarly, this serves as backup for missed apogee detecting by the sensor values.\\
+
+\subsection{PID Controllers}
+
+\subsection{Internal data processing}
 
 \subsection{Implementation}
 Similarly to the state machine, the software is split into a main function and a setup code. The key difference is that the setup code is only called once, whereas the main function is a loop as seen in the code example \ref{code:top_level} . This is part of the arduino framework which was chosen for this project because of its wide range of open-source libraries, which could be used for reading sensors or communicating via UART or I2C.\\
