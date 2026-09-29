@@ -124,7 +124,7 @@ sorting=none
 
 \chapter*{Eidesstattliche Erklärung}
 Hiermit versichere ich, dass ich die vorliegende Arbeit selbstständig und unter aus
-schließlicher Verwendung der angegebenen Literatur und Hilfsmittel erstellt habe. Die
+schließlicher Verwendung der angegebenen Literatur und Hilfsmittel erstellt habe. Ergänzend erkläre ich, dass bei der Erstellung dieser Arbeit generative Werkzeuge der Künstlichen Intelligenz (KI) als Hilfsmittel zum Einsatz kamen. Der genaue Umfang, der Verwendungszweck sowie die betroffenen Kapitel und Tools sind im beigefügten „KI-Verzeichnis“ (Appendix \ref{sec:AI}) vollständig und wahrheitsgemäß offengelegt.Die
 Arbeit wurde bisher in gleicher oder ähnlicher Form keiner anderen Prüfungsbehörde
 vorgelegt und nicht veröffentlicht.\\\\
 
@@ -149,10 +149,9 @@ The development process of a printed circuit board for this system according to 
 \listoftables
 \cleardoublepage
 
-\chapter*{List of abbreviations}
+\chapter*{List of Abbreviations}
 	\begin{acronym}
 		\acro{SRPOG}[SPROG]{\dotfill Spaceflight Rocketry Giessen}
-		\acro{eV}[e.V.]{\dotfill eingetragener Verein}
 		\acro{EAGLE}[EAGLE]{\dotfill Electronic Acutation \& Guidance for Landing and Eleveation}
 		\acro{PIPE}[PIPE]{\dotfill Project for Inital Practical Experimentation}
 		\acro{ARCHER}[ARCHER]{\dotfill Aerial Rocket for Competions and High-altitude Experimental Rocketry}
@@ -163,23 +162,26 @@ The development process of a printed circuit board for this system according to 
 		\acro{SMD}[SMD]{\dotfill Surface mounted devices}
 		\acro{SPI}[SPI]{\dotfill Serial peripheral interface}
 		\acro{I2C}[I2C]{\dotfill Inter-Integrated Circuit}
+		\acro{UPDI}[UPDI]{Unified Program and Debug Interface}
 		\acro{UART}[UART]{\dotfill Universal Asynchronous Receiver-Transmitter}
 		\acro{RAM}[RAM]{\dotfill Random access memory}
 		\acro{UPDI}[UPDI]{\dotfill Unified Program and Debug Interface}
 		\acro{GND}[GND]{\dotfill Ground}
 		\acro{ASCENT}[ASCENT]{\dotfill Advanced System for Control Electronics, Navigation and Tracking}
 		\acro{EuRoC}[EUROC]{\dotfill European Rocketry Challenge}
-		\acro{COTS}[COTS]{\dotfill Commercial Off-The-Shelf}
-		\acro{IMU}[IMU]{\dotfill Inertial Measurement Unit}
+		\acro{COTS}[COTS]{\dotfill Commercial Off-The-Shelf}		
 		\acro{JLU}[JLU]{\dotfill Justus-Liebig-University Giessen}
 		\acro{THM}[THM]{\dotfill Technische Hochschule Mittelhessen}
 		\acro{OSR}[OSR]{\dotfill Oversampling ratio}
-		\acro{MOSFET}[MOSFET]]{\dotfill Metal-oxide-semiconductor field-effect transistor}
-		\acro{ST}[ST]]{\dotfill Schmitt Trigger}
+		\acro{MOSFET}[MOSFET]{\dotfill Metal-oxide-semiconductor field-effect transistor}
+		\acro{ST}[ST]{\dotfill Schmitt Trigger}
+		\acro{uC}[uC]{\dotfill Microcontroller}
+		\acro{PSS}[PSS]{\dotfill Pressure Sensor}
+		\acro{IMU}[IMU]{\dotfill Inertial Measurement Unit}
 	\end{acronym}
-	\cleardoublepage
-
-
+	
+	
+\cleardoublepage
 
 
 \setcounter{page}{1}
@@ -203,41 +205,41 @@ As mentioned before, ARCHER is SPROG's entry for EuRoC. It is a two-staged exper
 At the core of ARCHER's stages sits the modularized avionics stack called ASCENT II. It will serve as the flight computer, meaning that it will deploy the parachutes for both stages and ignite the second stage motor.\\
 ASCENT's design philosophy is based on modules because it makes troubleshooting and expansion of each system easier than having one single avionics board. ASCENT II features a power management system, a sensor module for collecting data, a telemetry module for communication with the ground and EAGLE. The latter deals with parachute deployment, staging, second stage motor ignition and airbrake actuation, all of which are deemed saftey critical systems, because of their potentially dangerous consequences in case of failures.\\
 
-\section{Objectives and scope}
+\section{Objectives and Scope}
 The main objective is the theoretical design of the EAGLE PCB and its software architecture, which should accommodate redundancy of systems and be in compliance with EuRoC rules. However, the testing and use of this PCB and its software will not be featured as part of this report. The main goal is to highlight the processes and architecture of EAGLE in the large context of ASCENT II, showing its design iterations and decision making process.\\
 To comply with these objectives, EAGLE will feature a variety of sensors and deal with advanced circuit and software design.
 
 \newpage
 
 
-\chapter{Theoretical basics}
+\chapter{Theoretical Basics}
 To illustrate some of the decisions made within the design phase of EAGLE, it is important to first get a basic understanding of the fundamentals of sounding rocket recovery, avionics architecture and PCB design. This chapter deals with said fundamentals and aims to highlight the most important theoretical topics.
 
-\section{Electrical design}
-\subsection{Voltage management (RC circuit)}
-\subsection{Metal-oxide-semiconductor field-effect transistor (MOSFET)}
+\section{Electrical Design}
+\subsection{Voltage Management (RC Circuit)}
+\subsection{Metal-Oxide-Semiconductor Field-Fffect Transistor (MOSFET)}
 \subsection{Inverting Schmitt Trigger}
 
-\section{Software design} 
+\section{Software Design} 
 
-\subsection{State machines}\label{sec:state_machine}
+\subsection{State Machines}\label{sec:state_machine}
 State machines or Finite State Machine are a commonly used concept in software engineering and generally describes a system which can only be in one state of a finite number of state at a time. It is a event-driven and reactive system which can change its state based on certain events happening or conditions that are met.\\
 An example for a state machine would be a video, which can have multiple states such as: Paused, playing, stopped and so on. A possible transition between those states would be something like pressing the pause and play button. Pressing the pause button causes a transition from the state "Playing" to the state "Paused". However, while the video is playing it can not be paused or stopped at the same time.\\
 By only having one state be active at a time, it makes both troubleshooting and designing simpler. This is due to the modularization of the software. If a certain state is being executed, it means that if an issue occurs it can only be caused by this specific state. This instantly narrows down the amount of error sources. Additionally, each state can be developed independently as there are no dependencies between states other than the transition conditions. Each state behaves as if it was its own program that is called from a seperate program. It also makes the predictability of a system more reliable, because of the same reason. A smaller program is easier to predict in its behaviour by relying on less complexity and dependencies between systems.\\
 The way state machines are typically implemented is by the use of switch-case statements, where each case is representative of a state. Typically, each case or state has its own running loop that executes a certain function, which is executed when its in the right state, e.g. playing the video. Within a loop there would be a breaking condition, e.g. a pause button press event, which would both end the loop and also set the next state, which would then start a different loop.\\
 State machines do not need to follow a linear stream of states. It is common that certain conditions or transitions can cause jumps in the state machine leaving entire states behind. Similarly, it can be possible to go back to a former state instead of moving forward.
 
-\subsection{PID controllers}
+\subsection{PID Controllers}
 
 \section{PCB Design}
 
-\section{Communication protocols}
+\section{Communication Protocols}
 \subsection{Inter-Integrated Circuit (I2C)}
 \subsection{Universal Asynchronous Receiver-Transmitter (UART)}
 \subsection{Serial Peripheral Interface (SPI)}
 \subsection{Comparison}
 
-\section{Sounding rocket recovery systems}
+\section{Sounding Rocket Recovery Systems}
 The term "sounding rocket" refers to a suborbital class rocket, which usually only goes to hundreds of kilometers in altitude in order to reach space and achieve a certain amount of zero gravity. This results in the vehicle falling back down to earth after a short amount of time in space. Every sounding rocket features some form of recovery since a free-falling rocket at speeds much higher than the speed of sound poses too much of a risk for nearby people and personnel. Whilst modern orbital class rockets are either expendable (e.g. Ariane\,6) or recovered using propulsive landing methods (e.g. SpaceX Falcon\,9), sounding rockets usually rely on parachutes. This is due to the fact, that the main goal of sounding rockets is to provide a short time in free-fall or zero gravity for experiments\cite{DLRsoundingRockets}, which could otherwise not be completed within earth's atmosphere. This means that the main goal is to maximize payload capacity and minimize the complexity and cost. This is usually achieved by relying on a "simpler" architecture than bi-liquid rockets, such as hybrid or solid motors. For simplicity, only solid motors will be discussed.\\
 A solid motor consists of a mix of the fuel and oxidizer in one solid so called "grain", which is ignited and burns at a more or less constant rate. This results in an uncontrolled thrust-curve which is controller by the motors geometry and chemical composition. This makes a complicated system such as tanks and pressurized systems mostly obsolete, because fuel and oxidizer are both stored in the same space. This vastly reduces wait and space taken up by the propulsion segment. Since it is not possible to control thrust on in a solid booster, the recovery can not be made using propulsive methods, which is why parachutes are used.\\
 Most recovery systems consist of more than one parachute, the so called "drogue-parachute" and "main-parachute". The drogue is usually significantly smaller than the main parachute.
@@ -252,7 +254,7 @@ When the drogue is deployed, it is usually still attached to a piece of rope tha
 	\label{fig:trajectory}
 \end{figure}
 
-\section{Flight trajectory\footnote{The following theoretical foundations on the topic of flight trajectories of suborbital rockets are based in part on the author’s previous work from the student project on the topic of the mechanical design of EAGLE (see "Mechanical Design of Electronic Actuation \& Guidance for Landing and Elevation (EAGLE) system"\cite{EAGLE}). This approach is expanded upon below to include the aspects parachute deployment in order to elaborate the milestones which EAGLE will have to be able to autonomously detect}} \label{sec:trajectory}
+\section{Flight Trajectory\footnote{The following theoretical foundations on the topic of flight trajectories of suborbital rockets are based in part on the author’s previous work from the student project on the topic of the mechanical design of EAGLE (see "Mechanical Design of Electronic Actuation \& Guidance for Landing and Elevation (EAGLE) system"\cite{EAGLE}). This approach is expanded upon below to include the aspects parachute deployment in order to elaborate the milestones which EAGLE will have to be able to autonomously detect}} \label{sec:trajectory}
 
 Because a sounding rocket follows a ballistic, parabolic flight path, its ascent can be divided into a series of distinct phases. Several of these phases mark "milestones" that are directly tied to specific events during flight, such as parachute deployment or the separation of stages in a multi-stage vehicle.\\
 Eight milestones are relevant in this context which are shown in figure \ref{fig:trajectory}: Liftoff, MaxQ, booster burnout, the coast phase, apogee, drogue deployment and main parachute deployment. Each is described below.\\
@@ -263,21 +265,48 @@ Between booster burnout and apogee lies the coast phase. No longer driven by the
 The flight culminates at apogee, the highest point of the trajectory and the control setpoint for EAGLE. Vertical velocity falls to nearly $0\,\frac{\text{m}}{\text{s}}$ at this moment, and the rocket transitions into free fall. This point is typically used as a trigger of the deployment mechanism (e.g. pyrotechnic charges) of the drogue parachute.\\
 From this point, the rocket falls at a constant speed, which is determined by the size and lift of the drogue parachute. After reaching the target setpoint for main parachute deployment, another mechanism is triggered (e.g. a rope cutter) that causes the drogue parachute to disconnect from the airframe of the rocket such that it only remains connected to the main parachute. This results in the parachute being dragged out and therefore deployed. Afterwards, the rocket glides down at a constant final speed, which will also be the speed with which it touches down on the ground.
 
+\section{Barometric Formula}
+The barometric formula is used to correlate pressure to the altitude in respect to 
 
 
+\section{Nyquist Criteria}
 
-\section{Avionics architecture for recovery systems}
+
+\section{Avionics Architecture for Recovery Systems}
 
 \newpage
 
-\chapter{Background and related work}
-SPROG is one of many student rocketry teams in Germany alone. However, student rockets and especially the aspect of avionics is not a solved issue. This chaper will highlight the necessity of developing strong and reliable platforms for rocket recovery in the student rocketry sector.
+\chapter{Background and Related Work}
+Avionics systems on student rockets is not a solved issue, as teams come up with new innovative ideas and concepts to increase performance and optimize processes. To put the development of EAGLE into perspective and elaborate the importance of SRAD technology, this chapter highlights already established work and related topics in regards to industrial solutions and development within student teams.
 
-\section{DLR - MORABA}
+\section{DLR - MORABA}\label{sec:MORABA}
+MORABA, the Mobile Rocket Base, is a department of the German Aerospace Center (DLR) Space Operations and Astronaut Training institute, located in Oberpfaffenhofen near Munich. Founded in 1968 as a mobile launch service unit, it has become one of the leading European organizations for the preparation and execution of sounding rocket and balloon campaigns. Its mobility is a defining feature: the entire launch infrastructure, including launchers, telemetry and tracking stations, and range safety equipment, can be transported and set up at remote sites worldwide, from Esrange in Sweden and Andøya in Norway to Kourou, Woomera, and Arctic and equatorial locations.\\
+Beyond campaign operations, MORABA provides the full range of services required for a sounding rocket mission. These include mission analysis and trajectory simulation, vehicle design and integration, flight dynamics and guidance, navigation and control, structural and thermal analysis, as well as payload and recovery system development. MORABA operates a fleet of solid-propellant rockets, such as VSB-30, Improved Orion, and Brazilian-developed vehicles, and has additionally developed its own systems, including the Rocket Attitude Control System (ACS) for precise pointing during microgravity and astronomy missions.\\
+Over the decades, MORABA has supported hundreds of flights for scientific research in microgravity, atmospheric physics, and astronomy, as well as technology demonstration missions, including hypersonic and re-entry experiments and reusable launch vehicle testing (e.g., the DLR-led ReFEx experiment)\cite{MORABA}.\\
+MORABA employs a typical flight profile of a two-staged sounding rocket as shown in figure \ref{fig:MORABA_trajectory}. Similarly to EAGLE, MORABA's flight profile also features notable milestones such as stage seperation and second stage booster ignition as well as drogue and main parachute deployment. However, a major difference for parachute deployment is the altitude at which it reached/executed. Different to many student rockets, which only rise to an apogee of tens of kilometers, MORABA's high altitude rockets, which go as high as 800\,km do not deploy their drogue parachute at apogee. This is due to the fact, that the higher altitude brings many new challenges, such as the aero-thermodynamical effects of reentry. During reentry, the thermal stress and dynamic pressure on the vehicle prevent a deployment of the drogue parachute as it would not be able to survive this phase without burning up. Nevertheless, MORABA's avionics detect similar event and execute similar commands as SPROG's avionics. They need to detect first stage booster burnout, ignite a second stage and deploy parachute based on sensor readings.
 
-\section{European student rocketry}
+\begin{figure}[H]
+	\centering
+	\captionsetup{font=footnotesize}
+	\includegraphics[height=8cm]{Microgravity-1008x1024.jpg}
+	\caption[figure]{Trajectory of typical two-staged sounding rocket\cite{MORABA}}
+	\label{fig:MORABA_trajectory}
+\end{figure}
 
-\section{European Rocketry Challenge} \label{sec:euroc}
+\section{European Student Rocketry}\label{sec:Student_Rocketry}
+Student rocketry in Germany has developed over the past two decades from small, hobby-scale initiatives into a structured and technically ambitious research and education landscape. Driven by university-based teams, often organized as interdisciplinary student groups, these projects give students hands-on experience in the complete development cycle of a launch vehicle, from requirements definition and design to manufacturing, testing, and flight operations. Groups such as WARR (Wissenschaftliche Arbeitsgemeinschaft für Raketentechnik und Raumfahrt) at the Technical University of Munich (TUM), founded in 1962, and other teams at universities including Stuttgart (HyEnd), Aachen (Space Team Aachen), and Braunschweig (ERIG), have established long-standing traditions and a growing body of technical know-how.
+Furthermore, there has been an additional increase of student teams in other parts of Germany and Europe, SPROG among them.\\
+A central characteristic of the German scene is its progression from solid-propellant vehicles toward more complex systems, including hybrid and liquid-propellant engines, active guidance and control, and recovery systems. Several teams have pursued altitude records and technology demonstrations, and projects such as the hybrid rockets developed at the University of Stuttgart and the liquid-propellant developments at TUM have gained international attention. Students also increasingly work on subsystems such as avionics, telemetry, in-house engine test stands, and flight software, which mirrors professional aerospace workflows.\\
+Institutional support plays an important role. Programs such as DLR's REXUS/BEXUS (Rocket and Balloon Experiments for University Students), carried out in cooperation with the Swedish National Space Agency (SNSA) and ESA, and implemented with the support of MORABA, allow student experiments to fly on real sounding rockets and balloons launched from Esrange. Together with events such as the European Rocketry Challenge (EuRoC) in Portugal and the Spaceport America Cup in the USA, these opportunities provide German teams with launch access, technical review processes, and international benchmarking. Student rocketry thus forms an important bridge between academic education and the professional sounding rocket community, and it provides the context for the work presented in this thesis.\\
+Additionally, student rocketry plays a major role in the future of the european launcher industry. This is largely due to the fact that student teams not only teach the necessary skills to develop comprehensive technology, but also encourages the development of startups. The most recent example has been the NewSpace launcher company "Isar Aerospace", who have recently been able to achieve an orbit on only their second flight. Isar Aerospace's founders have previously been part of WARR, where the idea was supported through the "UnternehmerTUM Accelerator" program\cite{IsarAerospace} further establishing the importance of student teams.
+
+\subsection{Bundesverband studentischer Raumfahrt (BVSR)}
+The "Bundesverband studentischer Raumfahrt e.V." (engl. "German National Student Spaceflight Society") is national umbrella organization with 19 (corresponding\footnote{Student associations outside of Germany that are not full members}) member associations dedicated to connect the industry with student rocket associations. Its goal is to play a significant part in the future development of the european space sector by 2035\cite{BVSR}.\\
+Each year, one of BVSR's member clubs hosts the yearly BVSR conference where all associations get to meet up, connect with each other and decide on important topics regarding the next year of the BVSR. Additionally, it features multi-disciplinary workshops and fair including major space sector players such as OHB, Airbus and etc. underlying the importance of the student sector from the eyes of major space corporations.\\
+On top of that, the BVSR actively engages in its own research and projects such as ODIN, a design competition aimed at designing a sub-scale orbital class rocket as part of a competition between student groups\cite{BVSR}. Entries will be judged by a juror board consisting of industry experts. They are also cooperating with the "Starlab Initiative" to explore possible experiments and instrumentation of the commercial space station called "Starlab"\cite{BVSR}, which many believe to be the successor of the Internation Space Station.\\
+To summarize, the BVSR already plays a large part in shaping the space sector in Germany and in Europe with engagement both on political and technical level.
+
+\subsection{European Rocketry Challenge} \label{sec:euroc}
 The "European Rocketry Challenge" (EuRoC) is an international student rocketry competition hosted and organized by the Portugese Space Agency which was first introduced in 2020. Each year a selection of student teams across ESA member states compete in different categories such as altitudes (3 and 9\,km) or propulsion technologies (solid, hybrid and bi-liquid). Especially propulsion technologies get extra attention in the so called "SRAD" (student researched and developed) classed categories as they showcase the innovation and engineering skills of students with limited funding. This competition has pushed teams to challenge the limits of student rocketry by building e.g. the first ever student-built regeneratively cooled bi-liquid engine in Europe by WARR Rocketry.\\
 The competition awards multiple winners in different categories. Awards are decided based on the design, team spirit and accuracy regarding the targeted altitude. A team that achieves an apogee close to their target altitude receives more points than a team that is far away.\\
 It provides an ideal environment to prove skills under high stress environments for young and aspiring aerospace students whilst also connecting teams from across Europe. The aim is to strengthen Europe's aerospace sector by promoting a connected education program through friendly competitions.
@@ -292,10 +321,13 @@ It provides an ideal environment to prove skills under high stress environments 
 With ASCENT being SPROG's main flight computer for in-flight decisions during EuRoC, it does not only have to comply with internal requirements, but also external requirements set within the official sytsem design rule book provided by the portugese space agency. Failing to comply with set rules will lead to either a failed launch readiness review ahead of the launch during competition days or exclude any chance of qualification.\\
 Additionally, SPROG's own vision on the architecture and redundancy also plays a huge factor. The requirements stated by both parties will be discussed in this chapter.
 
-\section{SPROG's requirements}
-Due to the system additions made between PIPE and ARCHER, EAGLE will need to be able to handle a multitude of tasks reliably and accurately. Before even considering an application for EuRoC it was decided that EAGLE would be put in charge of recovery, staging and airbrake control. Since said tasks require strong reliability and accuracy, it was decided that EAGLE itself should be a dual redundant system featuring at least two sources for each data type (e.g. pressure, acceleration, etc.) that would be needed to accurately determine the rockets position and attitude. To achieve this, it was decided to determine the altitude using a processed value of acceleration data (through integration) and barometric pressure (altitude calculation). Furthermore, the acceleration data and barometric altitude estimation could be used to estimate the rockets speed. For this reason, two entirely different pressure sensors and accelerometers were selected. On top of that, an inertial measurement unit (IMU) was selected to provide feedback on the rotation speed of the rocket during ascent and additional acceleration measurements.\\
+\section{Control Output and Power Requirements}
 The recovery team opted for a pyrotechnic charge to deploy the drogue parachute, meaning that EAGLE would need to be able to fire pyrotechnic igniters. During PIPE's launch campaign, it was noted that having the firing electronics external to the PCB leads to a multitude of issues including wiring and space management. That is why the requirement was made to add all electronics having to do with pyrotechnics onto the PCB. Similarly, it was also decided to not use a screw terminal to fixate the igniters, EAGLE will sit in the middle of the avionics stack. This would make replacement of the igniter require a full de-stacking of the avionics system, which is both time consuming and complex. It would therefore be required to be able to replace the igniters in a full stack, meaning that the connector has to be chosen accordingly. The igniters that were chosen also required a current of at least 1\,A to fire. This means EAGLE needs to be able to provide 1\,A on all 4 channels, ideally simultaneously.\\
 Additionally, EAGLE needed to be able to provide "power width modulation" (PWM) signals to control the airbrake's servo. However, EAGLE does not need to provide the power to either of these systems. The power needed would be provided by another avionics module according to EAGLE's power requirements. The power provided to each PCB of the stack is limited to 3.3\,V and 5\,V. For the igniters and additional $V_\text{pyro}$ of 12\,V will be provided. Therefore, no component can use more than 5\,V as its supply voltage.
+
+\section{Sensor Requirements}
+Due to the system additions made between PIPE and ARCHER, EAGLE will need to be able to handle a multitude of tasks reliably and accurately. Before even considering an application for EuRoC it was decided that EAGLE would be put in charge of recovery, staging and airbrake control. Since said tasks require strong reliability and accuracy, it was decided that EAGLE itself should be a dual redundant system featuring at least two sources for each data type (e.g. pressure, acceleration, etc.) that would be needed to accurately determine the rockets position and attitude. To achieve this, it was decided to determine the altitude using a processed value of acceleration data (through integration) and barometric pressure (altitude calculation). Furthermore, the acceleration data and barometric altitude estimation could be used to estimate the rockets speed. For this reason, two entirely different pressure sensors and accelerometers were selected. On top of that, an inertial measurement unit (IMU) was selected to provide feedback on the rotation speed of the rocket during ascent and additional acceleration measurements.\\
+Additionally, all sensor will have to be I2C compatible at a clock speed of at least 1\,kHz. A sampling rate of at least 1\,kHz ensures that there is real-time access to sensor data, which determines an in-flight decision resolution of around 2\,ms, according to the nyquist criteria. This however, is not a hard requirement regarding the loop time as a mechanical system themselves have a reaction time larger than the loop time. Therefore, it does not need to be accurate to the next ms. The reason I2C was chosen is because of its lower complexity in comparison to SPI. SPI requires a chip select pin for each peripheral, which would take to many output pins away from more important tasks. This comes at the downside of the half-duplex nature of I2C and consequent lower communication speeds.
 
 \section{EuRoC system requirements} \label{sec:euroc_rules}
 Due to EAGLE wide-range of applications, it becomes necessary to apply multiple requirements set by the organizer's across the following categories:
@@ -307,9 +339,9 @@ Due to EAGLE wide-range of applications, it becomes necessary to apply multiple 
 	\item (Trajectory and stability)
 \end{itemize}
 
-The latter will not be discussed within this report, as it has already been discussed in an associated project showing the design of the mechanical aspect of EAGLE (i.e. the airbrakes), where such topics have been discussed. On top of that, requirements that do not directly influence the design of EAGLE will not be discussed.
+The latter will not be discussed within this report, as it has already been discussed in an associated project showing the design of the mechanical aspect of EAGLE (i.e. the airbrakes\cite{EAGLE}), where such topics have been discussed. On top of that, requirements that do not directly influence the design of EAGLE will not be discussed.
 
-\subsection{Ignition systems}
+\subsection{Ignition Systems}
 According to the design requirements ignition systems shall be disarmable and only be armed upon detecting liftoff \cite[p.~16]{EurocRules}. In this case, arming means that there needs to be at least two actions required for any igniter firing. EAGLE pyrotechnic firing channels must therefore be able to be armed both through soft- and hardware.\\
 As already specified by SPROG's recovery team, EuRoC also requires an electronic ignition system for all solid rocket motor ignitions \cite[p.~15]{EurocRules}. This implicates that EAGLE requires the before mentioned electronic firing channels.  
 
@@ -353,7 +385,7 @@ The battery managements system is ASCENT II's only "passive" module, meaning tha
 The last of ASCENT II's modules is EAGLE, which controls parachute deployment and airbrake actuations. It also features its own set of sensors in order to make it independent of the sensor modules. This was done, because the only way left to communicate between the two modules was UART (due to lack of I2C channels) or SPI. The latter being considered to complex to be implemented at the time and the other being considered significantly slower than I2C in terms of communication speed, which is not reliable enough for real-time decision making.\\
 In total, ASCENT II consists of five PCB's (2 Sensor modules), which are all individually designed along a certain design standard and PCB concept, which will be further discussed in subchapter \ref{sec:PCB_concept}.
 
-\subsection{PCB concept} \label{sec:PCB_concept}
+\subsection{PCB Concept} \label{sec:PCB_concept}
 In order to ensure the modularized design and having a consistent designs across all modules, a PCB concept was implemented. The concept, as seen in figure \ref{fig:PCB_concept}, consists of some standard component that should included in every module. One of these components are the two pin connectors on the left and right of the PCB. These are the main connections between the modules and carry signals and voltage supply over common pins. Additionally, there is a programming interface on the bottom left of the top view, which can I either be connected to a commonly used USB to UART converter or a UPDI converter, which can both be used for programming the microcontroller, depending on which protocol it supports. To the right of said interface, there is two status LED's. One of them, is single color LED, whilst the other is a RGB LED. The single color LED can be used to show simple debugging steps, like that the microcontroller is running and executing its software. The RBG LED is supposed to display the status of the module. This could be something like green = running, red = error and other colors indicating what part of the software is being executed. These LED's main purpose is debugging and troubleshooting with visual feedback, which would be crucial during a launch campaign, where any kind of mistake should ideally be caught before final integration.\\
 For integration purposes, the PCB also has standardized mounting holes, which can only be mounted in one specific way. That way, no PCB can be mounted incorrectly leading to the pins on the connector to be swapped around. When stacked, the PCB's are connected by the pin connectors and by threaded spacers which screw together through the mounting holes.\\
 All of these standard features were either proven during or a learning of SPROG's inaugural launch.
@@ -387,7 +419,7 @@ There are also some external connections. These include the before mentioned I2C
 \section{Software Architecture}
 With EAGLE being in charge for many systems that would be considered saftey-critical, it is imperitive that the software is just as reliable as the hardware. Any unexpected behaviour can - in the worst-case scenario - cause a catastrophic failure, which could result in the loss of the rocket or damage to person and property. The overall architecture and decisions that led to this architecture will be highlighted in this subchapter.
 
-\subsection{State machine}
+\subsection{State Machine}
 EAGLE's software is based on the concept of a state machine which was introduced in subchapter \ref{sec:state_machine}. The reason it was chosen as the architecture is due to the predictability and simplicity. On top of that, a rockets trajectory can be split into certain milestones or states (as discussed in subchapter \ref{sec:trajectory}). EAGLE's state machine consists of eight states, which are shown in figure \ref{fig:Software_architecture}. The states consist of "Pad idle" (0), "Initialized" (1), "Armed" (2), "Boost phase" (3), "Coasting" (4), "Apogee" (5), "Main deployment" (6), "Landed" (7) and "Abort" (8). Each state is assigned a number as part of an enumeration, which maps number values to strings for easier use in the software. The numbers of each state are represented in parentheses.
 
 \begin{figure}[H]
@@ -406,7 +438,7 @@ The "Apogee" state runs the logic required to deploy the drogue parachute. This 
 As a last step, the vehicle enters the "Landed" state, which tells the telemetry to un-arm the pyro channels, so the rocket can safely be approached. It also tells the telemetry to initiate recovery procedures such as activating a beeper and power down systems to allow for maximum sending time of the touchdown location.\\
 If there are any off nominal reports during the setup process, the "Abort" state may be entered, which tells the operator on the ground to hold the launch. However, this state does not have the capabilities to prevent the launch other than advice the operator to stand down. From an abort state, the telemetry can be used to make a decision whether to recycle the attempt, which means that the state machine would remotely be set back into the "Pad Idle" state by an operator or whether to abort the launch attempt and take the rocket off of the launch rail.
 
-\subsection{State transitions}
+\subsection{State Transitions}
 Each transition between states is governed by one or more boolean trigger conditions derived from sensor readings and system checks. Table \ref{tab:setup_state_transitions} and table \ref{tab:flight_state_transitions} specify these conditions for the setup phase and flight phase, respectively. Within these tables, a dash ("–") denotes a don't-care condition: the corresponding flag has no influence on whether the transition occurs, and may hold either value.\\
 Following power-up, the system resides in the initial setup/pad idle state (0). If both the sensors established and continuity flags evaluate to TRUE, initialization is considered complete and the system transitions to the initialized state (1), independent of the armed flag's state at that point. Conversely, if both flags are FALSE, setup is deemed to have failed and the system transitions directly to the abort state (8).\\
 From state 1, the system remains unarmed as long as continuity is maintained and the armed flag is FALSE (transition $1\rightarrow1$). If the armed flag becomes TRUE while continuity is still present, the system transitions to the armed state (2). Should continuity be lost at any point while in state 1, the system transitions to the abort state (8), regardless of the other flags.\\
@@ -420,100 +452,50 @@ If the vehicle does deploy the main parachute or at least enters state 6, it can
 The events "apogee detected", "main parachute altitude detected" and "landing detected" can each be redundantly triggered by a ground operator command or by timeout. When EAGLE detects liftoff it starts timers which evaluate if an event could have been reached based on timings from simulations. So even if EAGLE was to not detect apogee or main deployment and still managed to survive the impact, a timer would cause the rocket to inert itself. Similarly, this serves as backup for missed apogee detecting by the sensor values.\\
 
 \subsection{PID Controllers}
+TBD
 
-\subsection{Internal data processing}
-
-\subsection{Implementation}
+\subsection{High-Level Code Architecture}
 Similarly to the state machine, the software is split into a main function and a setup code. The key difference is that the setup code is only called once, whereas the main function is a loop as seen in the code example \ref{code:top_level} . This is part of the arduino framework which was chosen for this project because of its wide range of open-source libraries, which could be used for reading sensors or communicating via UART or I2C.\\
 
 \begin{lstlisting}[caption={Top level code design}, label={code:top_level}]
-void setup{
-	//runs setup state machine	
-	if(liftoff detected && continuity detected)
+	void setup{
+		//runs setup state machine	
+		if(liftoff detected && continuity detected)
 		state = boost; //start main loop
-}
-int main {
-	while(state != landed){
-		//runs flight state machine
-		if(execution time > set execution time)
+	}
+	int main {
+		while(state != landed){
+			//runs flight state machine
+			if(execution time > set execution time)
 			skip.to.next.iteration;
+		}
 	}
-}
 \end{lstlisting}
 
-Because of the time critical nature of the system, it is important that the software runs deterministic i.e. that it runs its main loop in a pre-defined amount of time. This is important, to avoid unexpected behavior. This can be enforced by e.g. using interrupts, which completely stops the loop iteration if this set amount of time has been exceeded. The time for the loop to finish is set by creating a statistic about how long the loop takes to run once over multiple iterations, but can also be pre-defined as a requirement. In this case, it was decided to base it on the average execution time, because whilst it is important to have a deterministic code, parachute deployment may happen within the vicinity of apogee and the main deployment altitude as discussed in subchapter \ref{sec:euroc_rules}.\\
+Because of the time critical nature of the system, it is important that the software runs deterministic i.e. that it runs its main loop in a pre-defined amount of time. This is important, to avoid unected behavior. This can be enforced by e.g. using interrupts, which completely stops the loop iteration if this set amount of time has been exceeded. The time for the loop to finish is set by creating a statistic about how long the loop takes to run once over multiple iterations, but can also be pre-defined as a requirement. In this case, it was decided to base it on the average execution time, because whilst it is important to have a deterministic code, parachute deployment may happen within the vicinity of apogee and the main deployment altitude as discussed in subchapter \ref{sec:euroc_rules}.\\
 
-The implementation of the state machine is done by using an enumeration, a list of string values that are assigned to numbers, for abstracting the states, which in turn makes the code more readable. In the main loop, a switch-case statement, essentially a large number of if-else-statements, is executed in every iteration (as shown in code example \ref{code:state_machine}). The main loop only starts executing logic, once the setup process is complete, liftoff was detected and the state has been changed to "boost". The switch-case statement checks which state is currently active and only executes that specific state's logic.
-
-\begin{lstlisting}[caption={States enumeration}, label={code:enum}]
-enum States {
-	pad_idle = 0,
-	initialized = 1,
-	armed = 2,
-	boost = 3,
-	coast = 4,
-	apogee = 5,
-	main_deploy = 6,
-	landed = 8
-};
-\end{lstlisting}
-
-\begin{lstlisting}[caption={Flight state machine}, label={code:state_machine}]
-while(state != landed){
-	getSensorData(); //retrievs sensor data
-	switch(state) {
-		case boost:
-			//execute burnout monitoring
-			break;
-		case coast:
-			//execute airbrake and staging logic
-			break;
-		case apogee:
-			//execute drogue deployment logic
-			break;
-		case main_deploy:
-			//execute main deployment logic
-			break;
-		case landed:
-			//execute post-touchdown/inerting logic
-			break;
-		default:
-			//do nothing until a known state is set by the setup state 
-			//machine
-	}
-}
-\end{lstlisting}
-
-In each state, outputs are set and the state transition triggers are evaluated. If a transition trigger is detected, the global state variable "state" (can be changed and accessed by all functions) is changed and the respective case is executed. A check for a state transition trigger can look like the following:
-
-\begin{lstlisting}[caption={State transition logic}, label={code:state_transition}]
-switch(state) {
-	case boost:
-	//boost state logic
-	if(burnout detected)
-		state = burnout;
-	break;
-\end{lstlisting}
-
-Because of the break statement, the switch-case statement finishes for this iteration and will assume the burnout state in the next iteration.\\
-In order to be able to process data within each case, sensor data has to be retrieved. This is done, before calling the switch-case statement, because every state needs the sensor data and it therefore makes the code more readable. In this sensor reading function, all 5 sensors are called and read. Afterwards, the data gotten from these sensors is processed using common data filters to narrow down the error in data calculations. On top of that, multiple sources of the same data will be calculated into one single data point, so that the case only has to call the processed data and does not have to do any advanced arithmetics.
-
+\subsection{Main Loop Architecture}
+GRAFIK: READING -> CONVERSION -> PROCESSING -> STATE MACHINE -> OUTPUTS
 \newpage
 
-\chapter{Preliminary design phase}
-Based on prior experience at SPROG, it was decided that each system would need to go through a preliminary design phase during which the requirement and architecture that were defined were to be tested for feasibility. This is done, to ensure that no resources are lost to small mistakes, which were not detected, because of a lack of knowledge or experience. This was an issue that poised SPROG's early stage developments. During the development of ASCENT I, PCB's were designed and ordered early on with minor to major design flaws costing the association time and resources, which were limited during that time due to the young age of the group. This phase was mostly about understanding and selecting the correct sensors and confirm the design on basic open questions. For example, the sensor module phased the question whether to use a built in antenna for the GNSS module or an external antenna. The only relevant open question during this phase was the selection of sensors. The process that were taken to limit the amount of unknowns in the PCB design phase, will be illuminated in this chapter.
+\chapter{Preliminary Design Phase}
+Based on prior experience at SPROG, it was decided that each system would need to go through a preliminary design phase during which the requirement and architecture that were defined were to be tested for feasibility. This is done, to ensure that no resources are lost to small mistakes, which were not detected, because of a lack of knowledge or experience. This was an issue that poised SPROG's early stage developments. During the development of ASCENT I, PCB's were designed and ordered early on with minor to major design flaws costing the association time and resources, which were limited during that time due to the young age of the group. This design phase is mostly about understanding and selecting the correct sensors and confirm the design on basic open questions. For example, the sensor module phased the question whether to use a built in antenna for the GNSS module or an external antenna. The only relevant open question during this phase was the selection of sensors. The process that were taken to limit the amount of unknowns in the PCB design phase, will be illuminated in this chapter.
 
-\section{Process}
-The first step in the preliminary design phase is the selection of components. The requirements dictate the amount of sensors and overall architecture but not which components to use exactly. Therefore, the first major step is to decide on the sensors that were to be used. However, there is no final decisions at this point. This is because each selected sensor had to go through initial testing on breakout boards and had to match certain expectations, which were evaluated during this process.
+\section{Component Selection}
+The first step in the preliminary design phase is the selection of components. The requirements dictate the amount of sensors and overall architecture but not which components to use exactly. Therefore, the first major step is to decide on the sensors that were to be used. However, there is no final decisions at this point. This is because each selected sensor had to go through initial testing on breakout boards and had to match certain expectations, which were evaluated during this process.\\
+The requirements and the consequent architecture required five sensors in total: Two accelerometers, two pressure sensor and one inertial measurement unit (IMU) to detect all data necessary for EAGLE's operation. To have true redundancy, it makes sense to not choose two sensors of the same kind from the same manufacturer or even the same product family. By doing so, the risk of having two sensors drop out because of a similar systematic issue becomes less likely.\\
+Some characteristics that are taken into account are things such as the supply voltage $V_\text{DD}$, power consumption, noise, accuracy/resolution and measurement range. Additionally, it has to be taken into account that I2C uses unique addresses, with each peripheral being able to have two assigned addresses, the primary and backup address, should either be taken by another peripheral. Therefore, it needs to be ensured that no I2C peripheral has overlapping addresses. Furthermore, the existence and ease of use of a sensor library, was taken into account. By doing so, a sensor could essentially become a plug-and-play system for testing and software related issues were minimized as some of these software libraries have existed and been used for multiple years.
 
-\section{Component selection}
-The requirements and the consequent architecture required five sensors in total: Two accelerometers, two pressure sensor and one inertial measurement unit (IMU) to detect all data necessary for EAGLE's operation. To decide 
+\section{Microcontroller}
+The microcontroller is the heart of all operations and needs to be the most reliable component on the PCB. It collects all the data from the sensors and distributes it to the telemetry system and data storage as well as fire pyro-channels and actuate the servos and be able to read analogue signals. Therefore, the selected microcontroller needs a wide range of pin-types.
 
-\section{Component evaluation}
+\subsection{AVR128DB64}
+The AVR128DB64 was the first choice solely based on past experience and ease of programming. It has an easy to understand pinout and 64 pins and runs on the arduino framework. The AVR128DB28 (same family of controllers) has been used in a previous telemetry system meaning there was a lot of experience using this type of microcontroller. Additionally, it allows communication via SPI, UART and I2C. The latter being used for communication with all sensors and between the communication with the telemetry subsystem. It also featured a relatively new programming protocol called "Unified Program and Debug Interface" (UPDI), which only requires one pin for programming instead of two dedicated UART ports like other microcontrollers, making programming substantially easier.\\
+In hindsight, there should have been less emphasize on past experiences as they allowed for an oversight on the computing power of the chip, which is arguable the most important characteristic. After connecting and testing multiple sensors to the microcontroller, it was discovered the RAM overflowed with data during the first loop, rendering the microcontroller useless for usage in EAGLE.
 
-
-\chapter{PCB Design - CanSat version}
-
+\subsection{ESP32-S3-Vroom-N4-1u}
+After running into issues with the AVR128DB64 a team member of the electronics working group within the association suggested to test the ESP32 as it is a dual-core microcontroller and has more RAM available. It also features all common communication protocols, but needs to be programmed using UART, rendering two pins unusable for any other purposes. The programming also needs to additional pins called "EN" and "IO0" which need to be pulled to GND in a specific sequence to put the microcontroller into the so called "programming mode". However, it did feature a D+ and D- pin meaning a USB interface can easily be connected for programming and data-reading. In addition to that, it is an IC meaning that it has additional features such as an built-in WiFi module and antenna. To save space it was decided to use the "-1u" version, because that means that the ESP32 would come without an antenna but with a coax-connector. However, all of this came at the cost of the arduino framework as ESP32s run on their own firmware and framework. In some cases however, the ESP32 is capable of running arduino code, meaning that the code only needs to be adapted slightly.\\
+For those reasons, the ESP32-S3-Vroom-N4-1u was chosen as the microcontroller for EAGLE.
 
 
 
@@ -522,9 +504,77 @@ The requirements and the consequent architecture required five sensors in total:
 
 \newpage
 
+\chapter{Software Implementation}
+This chapter describes the discrete implementation of the software architecture using pseudo-code snippets. It is meant to highlight the challenges and design decisions made during the development of the software.
+
+\section{Internal Data Processing}
+EAGLE collects a lot of data, which it has to process every single loop cycle. For example, all altitude readings are derived from other physical units such as the barometric pressure and acceleration. However, the conversion from these values to useful data that can be processed an used by controllers and other parts of the software, it has to go through a series of conversion steps. These steps will be highlighted in this subchapter.
+
+\subsection{Integration of IMU data}
+
+
+
+\section{State machine}
+The implementation of the state machine is done by using an enumeration, a list of string values that are assigned to numbers, for abstracting the states, which in turn makes the code more readable. In the main loop, a switch-case statement, essentially a large number of if-else-statements, is executed in every iteration (as shown in code example \ref{code:state_machine}). The main loop only starts executing logic, once the setup process is complete, liftoff was detected and the state has been changed to "boost". The switch-case statement checks which state is currently active and only executes that specific state's logic.
+
+\begin{lstlisting}[caption={States enumeration}, label={code:enum}]
+	enum States {
+		pad_idle = 0,
+		initialized = 1,
+		armed = 2,
+		boost = 3,
+		coast = 4,
+		apogee = 5,
+		main_deploy = 6,
+		landed = 8
+	};
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Flight state machine}, label={code:state_machine}]
+	while(state != landed){
+		getSensorData(); //retrievs sensor data
+		switch(state) {
+			case boost:
+			//execute burnout monitoring
+			break;
+			case coast:
+			//execute airbrake and staging logic
+			break;
+			case apogee:
+			//execute drogue deployment logic
+			break;
+			case main_deploy:
+			//execute main deployment logic
+			break;
+			case landed:
+			//execute post-touchdown/inerting logic
+			break;
+			default:
+			//do nothing until a known state is set by the setup state 
+			//machine
+		}
+	}
+\end{lstlisting}
+
+In each state, outputs are set and the state transition triggers are evaluated. If a transition trigger is detected, the global state variable "state" (can be changed and accessed by all functions) is changed and the respective case is executed. A check for a state transition trigger can look like the following:
+
+\begin{lstlisting}[caption={State transition logic}, label={code:state_transition}]
+	switch(state) {
+		case boost:
+		//boost state logic
+		if(burnout detected)
+		state = burnout;
+		break;
+	\end{lstlisting}
+	
+	Because of the break statement, the switch-case statement finishes for this iteration and will assume the burnout state in the next iteration.\\
+	In order to be able to process data within each case, sensor data has to be retrieved. This is done, before calling the switch-case statement, because every state needs the sensor data and it therefore makes the code more readable. In this sensor reading function, all 5 sensors are called and read. Afterwards, the data gotten from these sensors is processed using common data filters to narrow down the error in data calculations. On top of that, multiple sources of the same data will be calculated into one single data point, so that the case only has to call the processed data and does not have to do any advanced arithmetics.
+
+
 
 \chapter{PCB Design - ASCENT II}
 
+\section{Power Budget}
 
 \newpage
 
@@ -535,28 +585,32 @@ The requirements and the consequent architecture required five sensors in total:
 
 \chapter{Discussion}
 
-\iffalse
-\chapter{Selection of components}
-The components of the PCB make up the most integral part of this system as all decisions and signals are relying on high quality data with low noise. Therefore, a significant amount time was spent researching a multitude of sensors and other components. As mentioned in, the board will feature five sensors and a microcontroller powerful enough to handle all the data. The most important requirements for these is an operating voltage of either 3.3V or 5V as that is the voltage that is being supplied by the PSU.
-
-\section{Microcontroller}
-The microcontroller is the heart of all operations and needs to be the most reliable component on the PCB. It collects all the data from the sensors and distributes it to the telemetry system and data storage as well as fire pyro-channels and actuate the servos and be able to read analogue signals. Therefore, the selected microcontroller needs a wide range of pin-types.
-
-\subsection{AVR128DB64}
-The AVR128DB64 was the first choice solely based on past experience and ease of programming. It has an easy to understand pinout and 64 pins and runs on the arduino framework. The AVR128DB28 (same family of controllers) has been used in a previous telemetry system meaning there was a lot of experience using this type of microcontroller. Additionally, it allows communication via SPI, UART and I2C (commonly used communication protocols). The latter being used for communication with all sensors and between the communication with the telemetry subsystem. It also featured a relatively new programming protocol called "UPDI", which only requires one pin for programming instead of two dedicated UART ports like other microcontrollers, making programming substantially easier.\\
-In hindsight, there should have been less emphasize on past experiences as they allowed for an oversight on the computing power of the chip, which is arguable the most important characteristic. After connecting and testing multiple sensors to the microcontroller, it was discovered the RAM overflowed with data during the first loop, rendering the microcontroller useless for usage in EAGLE.
-
-\subsection{ESP32-S3-Vroom-N4-1u}
-After running into issues with the AVR128DB64 a team member of the electronics working group within the association suggested to test the ESP32 as it is a dual-core microcontroller and has more RAM available. It also features all common communication protocols, but needs to be programmed using UART, rendering two pins unusable for any other purposes. The programming also needs to additional pins called "EN" and "IO0" which need to be pulled to GND in a specific sequence to put the microcontroller into the so called "programming mode". However, it did feature a D+ and D- pin meaning a USB interface can easily be connected for programming and data-reading. In addition to that, it is an IC meaning that it has additional features such as an built-in WiFi module and antenna. To save space it was decided to use the "-1u" version, because that means that the ESP32 would come without an antenna but with a coax-connector. However, all of this came at the cost of the arduino framework as ESP32s run on their own firmware and framework. In some cases however, the ESP32 is capable of running arduino code, meaning that the code only needs to be adapted slightly.\\
-For those reasons, the ESP32-S3-Vroom-N4-1u was chosen as the microcontroller for EAGLE.
-\fi
-
 \newpage
 \printbibliography %Prints bibliography
 
 \setcounter{page}{1}
 \pagenumbering{Roman}
 \chapter{Appendix}
+
+\section{Artificial Intelligence}\label{sec:AI}
+Some (sub-)chapters have been rewritten, reworked or corrected using generative AI tools such as ChatGPT and Claude. The used models and affected chapters will be noted in this Appendix chapter. The below mentioned models have only been used for writing and researching. No AI agents have been used in the design of EAGLE or its software architecture.
+
+
+\begin{center}
+	\captionof{table}{AI usage within this thesis}	
+	\label{tab:AI}
+	\begin{adjustbox}{width=\textwidth}	
+		\begin{tabular}{|c|c|c|} \hline		
+			\textbf{Model} & \textbf{Affected chapter} & \textbf{Type of use} \\ \hline\hline
+			Claude Sonnet 5.5 & \makecell{Subchapter \ref{sec:MORABA} (MORABA) and\\Introduction text of chapter \ref{sec:Student_Rocketry} (European Student Rocketry)} & Text generation and optimization \\ \hline
+			Claude Sonnet 5.5 & Every chapter & \makecell{Proofreading and correction of \\grammatical and spelling mistakes} \\ \hline
+			GPT-5.6 Luna & Every chapter & \makecell{Proofreading and correction of \\grammatical and spelling mistakes}  \\ \hline			
+		\end{tabular}
+	\end{adjustbox}
+\end{center}
+
+
+\newpage
 
 \section{Tables}
 
