@@ -134,7 +134,7 @@ vorgelegt und nicht veröffentlicht.\\\\
 
 
 \chapter*{Abstract}
-The development of the "Electronic Actuation \& Guidance for Landing and Elevation" (EAGLE) system is a project developed in cooperation with the student rocketry association "Spaceflight Rocketry Gießen e.V." as part of its self-developed on-board computer called "Advances System for Control Electronics, Navigation and Tracking" (ASCENT). Therefore, I would like to thank Spaceflight Rocketry Gießen for giving me the opportunity to pursue the project with their equipment and funding.\\
+The development of the "Electronic Actuation \& Guidance for Landing and Elevation" (EAGLE) system is a project developed in cooperation with the student rocketry association "Spaceflight Rocketry Gießen e.V." as part of its self-developed on-board computer called "Advances System for Control Electronics, Navigation and Tracking" (ASCENT). Therefore, I would like to thank Spaceflight Rocketry Giessen for giving me the opportunity to pursue the project with their equipment and funding.\\
 EAGLE is a avionics module which uses real-time sensor data to accurately estimate the rockets position and attitude as well as detecting mission critical waypoints (such as apogee) to deploy the recovery system, perform the staging and subsequent firing of the sustainer's motor and make real-time decisions about an active aerodynamical airbrake system, which accurately limits the maximum altitude to a preset value.\\
 The development process of a printed circuit board for this system according to the rule book provided by the "European Rocketry Challenge" will be the core subject of this project.
 
@@ -162,7 +162,6 @@ The development process of a printed circuit board for this system according to 
 		\acro{SMD}[SMD]{\dotfill Surface mounted devices}
 		\acro{SPI}[SPI]{\dotfill Serial peripheral interface}
 		\acro{I2C}[I2C]{\dotfill Inter-Integrated Circuit}
-		\acro{UPDI}[UPDI]{Unified Program and Debug Interface}
 		\acro{UART}[UART]{\dotfill Universal Asynchronous Receiver-Transmitter}
 		\acro{RAM}[RAM]{\dotfill Random access memory}
 		\acro{UPDI}[UPDI]{\dotfill Unified Program and Debug Interface}
@@ -266,8 +265,114 @@ The flight culminates at apogee, the highest point of the trajectory and the con
 From this point, the rocket falls at a constant speed, which is determined by the size and lift of the drogue parachute. After reaching the target setpoint for main parachute deployment, another mechanism is triggered (e.g. a rope cutter) that causes the drogue parachute to disconnect from the airframe of the rocket such that it only remains connected to the main parachute. This results in the parachute being dragged out and therefore deployed. Afterwards, the rocket glides down at a constant final speed, which will also be the speed with which it touches down on the ground.
 
 \section{Barometric Formula}
-The barometric formula is used to correlate pressure to the altitude in respect to 
+The barometric formula can be used to correlate atmospheric pressure, temperature or air density to the altitude above sea-level. It is used in aircraft and lower flying sounding rockets to estimate its altitude. This is done by measuring the surrounding absolute air pressure and calculating the resulting altitude.\\
 
+\subsection{Hydrostatic equation}
+The underlying mathematical mechanics of the barometric lie in the hydrostatic equation, which describes the correlation between pressure at a defined depth within a fluid.\\
+To understand the basic concept of hydrostatics, a infinitesimal volume element d$V$ of base area $A$ and infinitesimal height d$h$ can be considered. The force $F$ exercised on the base area at a known pressure $p$ of a fluid of density $\rho$ can be described as:
+
+\begin{align}
+	F_\text{hydro} &= p\cdot A && \text{with } p = \rho gh\\
+	&= \rho gh\cdot A = \rho g\cdot V && \text{with } m = \rho V \label{eqn:Hydrostatic_force}\\	
+	F_\text{hydro} &= m\cdot g = \rho g\cdot V
+	\end{align}
+
+When considering the volume to be infinitesimal, the function can be described as follows:
+
+\begin{align}
+	\text{d}m\cdot g = \rho\cdot\text{d}V =\rho g\cdot\text{d}h\cdot A	
+	\label{eqn:Hydrostatic_pressure}
+\end{align}
+
+Based on equation \ref{eqn:Hydrostatic_pressure}, it is possible to calculate the Force $F$ exercised on volume element d$V$:
+
+\begin{align}
+	F_\text{hydro}(h+\text{d}h) &= F_\text{hydro}(h+\text{d}h)+F_\text{hydro}(h) && \text{with eqn. \ref{eqn:Hydrostatic_force}}\\
+	&= \rho g (h + \text{d}h)\cdot A + \rho gh\cdot A = A (\rho g (h + \text{d}h) + \rho gh)&& \text{with } p=\rho gh\\
+	F_\text{hydro}(h+\text{d}h) &= A(p+\text{d}p)	
+\end{align}
+
+\begin{figure}[H]
+	\centering
+	\captionsetup{font=footnotesize}
+	\includegraphics[height=5cm]{Hydrostatische grundgleichung.png}
+	\caption[figure]{Volume element in hydrostatic system\cite{HydrostaticFigure}}
+	\label{fig:hydrostat_formula}
+\end{figure}
+
+\subsection{Isothermal barometric formula}
+When considering the system to be in equilibrium, meaning that all acting forces cancel each other out, the system can be described as follows:
+
+\begin{align}
+	F_\text{G} &= F_\text{hydro}(h) - F_\text{hydro}(h+dh)\\
+	0 &= F_\text{hydro}(h) - F_\text{hydro}(h+dh) - F_\text{G} && \text{with } F_\text{G} = \rho g\cdot\text{d}h\cdot A\\
+	0 &= pA - A(p + dp) - \rho g\cdot\text{d}h\cdot A\\
+	\frac{\text{d}p}{\text{d}h} &= \rho g
+	\label{eqn:pressure_height_differential}
+\end{align}
+
+When considering this system, we assume the fluid to be incompressible and follow the laws of an ideal gas. This means that the gas molecules are considered to be mass points of no volume, there are no acting intermolecular forces and the collisions are considered elastic. By doing so we can use the formular for density of an ideal gas:
+
+\begin{align}
+	\rho &= \frac{pM}{RT} 
+	\label{eqn:density}
+\end{align}
+
+$M$ represents the molar mass, so the mass per $6.022\cdot 10^{23}$ (1\,mol) particles. $R$ stands for the universal gas constant, which is the equivalent of $8.314\,\frac{\text{J}}{\text{K}\cdot\text{mol}}$ and $T$ being the absolute temperature in K. By substituting $\rho$ from equation \ref{eqn:pressure_height_differential} with equation \ref{eqn:density} and integrating over the pressure and height differential, you get the following expression:
+
+\begin{align}
+	\frac{\text{d}p}{\text{d}h} &= \rho g\\
+	\frac{\text{d}p}{\text{d}h} &= -\frac{pM}{RT}g\\
+	\frac{\text{d}p}{p} &= -\frac{Mg}{RT}\text{d}h \label{eqn:pressure_differential}\\
+	\int_{p(h_0)}^{p(h_1)} \frac{1}{p} \, \text{d}p &= -\int_{h_0}^{h_1} \frac{Mg}{RT} \, \text{d}h\\
+	\text{ln}\frac{p(h_1)}{p(h_0)}) &= -\frac{Mg}{RT}(h_1-h_0) = -\frac{Mg}{RT}\Delta h\\
+	\frac{p(h_1)}{p(h_0)} &= e^{-\frac{Mg}{RT}\Delta h}\\
+	p(h_1) &= p(h_0)e^{-\frac{Mg}{RT}\Delta h}
+	\label{eqn:isothermal_formula}
+\end{align}
+
+
+\subsection{Adiabatic barometric formula}
+Equation \ref{eqn:isothermal_formula} is derived under the assumption that the temperature stays constant with rising altitude. However, the temperature changes with the altitude, which makes this isothermal formula inaccurate for altitudes over $\approx$5\,km.\\
+For simplicity reasons, the atmosphere will be assumed as adiabatic, meaning that no energy will be exchanged with external systems, meaning the internal energy of the system will remain constant. By doing so, we can assume the system to be an adiabatic process following the laws of the following equation:
+
+\begin{align}
+	\frac{\text{d}p}{p} &= \frac{\kappa}{\kappa -1} \frac{\text{d}T}{T}
+	\label{eqn:adiabatic_process}
+\end{align}
+
+$\kappa$ is the "heat capacity ratio" and describes the ratio between the heat capacity of a gas at constant pressure and a gas at constant temperature. For air, $\kappa$ can be assumed to 1.402. Using equation \ref{eqn:pressure_differential}, the following temperature gradient can be calculated:
+
+\begin{align}
+	\frac{\text{d}p}{p} &= -\frac{Mg}{RT}dh && \text{with } \frac{\text{d}p}{p} = \frac{\kappa}{\kappa - 1} \frac{\text{d}T}{T}\\
+	\frac{\kappa}{\kappa - 1} \frac{\text{d}T}{T} &= -\frac{Mg}{RT}\text{d}h\\
+	{\text{d}T} &= - \frac{\kappa - 1}{\kappa} \frac{Mg}{R}\text{d}h
+\end{align}
+
+By integrating over the height an temperature, the following equation for the temperature vs. height correlation can be calculated:
+
+\begin{align}
+	\int_{T(h_0)}^{T(h_1)} \,\text{d}T &= - \int_{h_0}^{h_1} \frac{\kappa - 1}{\kappa} \frac{Mg}{R} \,\text{d}h\\
+	T(h_1) - T(h_0) &= - \frac{\kappa - 1}{\kappa} \frac{Mg}{R} \Delta h\\
+	T(h_1) &= T(h_0) - \frac{\kappa - 1}{\kappa} \frac{Mg}{R} \Delta h = T(H_0)\left(1 - \frac{\frac{\kappa - 1}{\kappa} \frac{Mg}{R} \Delta h}{T(h_0)}\right)
+\end{align}
+
+The resulting equation describes the temperature gradient within the atmosphere under the above mentioned assumptions. By substituting the temperature in equation \ref{eqn:pressure_differential} and once more integrating over the altitude and pressure, the adiabatic pressure gradient in regards to the altitude can be derived:
+
+\begin{align}
+	\frac{\text{d}p}{p} &= -\frac{Mg}{RT}\text{d}h\\
+	\frac{\text{d}p}{p} &= -\frac{Mg}{RT(H_0)\left(1 - \frac{\frac{\kappa - 1}{\kappa} \frac{Mg}{R} \Delta h}{T(h_0)}\right)}\text{d}h\\
+	\int_{p(h_0)}^{p(h_1)} \frac{1}{p} \, \text{d}p &= -\int_{h_0}^{h_1} \frac{Mg}{RT(h_0)\left(1 - \frac{\frac{\kappa - 1}{\kappa} \frac{Mg}{R} \Delta h}{T(h_0)}\right)}\text{d}h\\
+	p(h_1) &= p(h_0)\left(1 - \frac{\kappa - 1}{\kappa}\frac{Mg\Delta h}{RT(h_0)}\right)^{\frac{\kappa}{\kappa - 1}}
+\end{align}
+
+\subsection{International barometric formula}
+The final equation can be simplified using the standard atmosphere,  which is defined by the "International Civil Aviation Organization" (IACO). The standard atmosphere defines sea level as reference height $h_0$, 15\,°C or 288.15\,K as the reference temperature $T(h_0)$ and 1013.25\,hPa as the reference pressure $p(h_0)$\cite{StandardAtmosphere}. This results in the final formula of both the pressure at altitude $h$ and the altitude itself being:
+
+\begin{align}
+	p(h) &= 1013.25\cdot \left(1 - \frac{0.0065\,\frac{\text{K}}{\text{m}}\cdot h}{288.15\,\text{K}}\right)^{5.255}\,\text{hPa}\\
+	h &= \frac{288.15\,\text{K}}{0.0065\,\frac{\text{K}}{\text{m}}}\left(1 - \left(\frac{p(h)}{1013.25\,\text{hPa}}\right)^{\frac{1}{5.255}}\right)
+\end{align}
 
 \section{Nyquist Criteria}
 
@@ -885,7 +990,6 @@ Some (sub-)chapters have been rewritten, reworked or corrected using generative 
 		\end{tabular}
 	\end{adjustbox}
 \end{sidewaystable}
-
 
 
 \end{document}
