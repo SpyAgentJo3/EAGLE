@@ -219,7 +219,7 @@ To illustrate some of the decisions made within the design phase of EAGLE, it is
 \subsection{Metal-Oxide-Semiconductor Field-Fffect Transistor (MOSFET)}
 \subsection{Inverting Schmitt Trigger}
 
-\section{Software Design} 
+\section{Software Concepts} 
 
 \subsection{State Machines}\label{sec:state_machine}
 State machines or Finite State Machine are a commonly used concept in software engineering and generally describes a system which can only be in one state of a finite number of state at a time. It is a event-driven and reactive system which can change its state based on certain events happening or conditions that are met.\\
@@ -234,6 +234,12 @@ State machines do not need to follow a linear stream of states. It is common tha
 
 \section{Communication Protocols}
 \subsection{Inter-Integrated Circuit (I2C)}
+I$^2$C is a communcation protocol developed by Philips semiconductors in 1982. The acronym, standing for "Inter-Integrated-Circuit" refers to the use case of I$^2$C, which is to communicate between two or more integrated circuits (ICs) such as a microcontroller and its peripherals such as sensors.\\
+I$^2$C is an synchronous serial communication bus, which consists of a data line, commonly referred to as "SDA" and a clock signal line, also known as "SCL". It follows the master-slave-principle, meaning that there is a central controller which dictates the clock speed to synchronize the communication over the data line with the peripherals (slaves) to avoid overlapping clock signals. A master can communicate with up to 128 devices on the same data lines by differentiating each slave by an individual address. This means that two slaves can never have the same address to avoid collision because all slaves are connected to the same data lines.\\
+Communication between master and slave is initiated by broadcasting the address of the slave device, after which the intent of the master (whether it wants to read or write) is communicated to the selected peripheral. Data is only sent or read after intent and address have been established. I$^2$C has different speed rates for the communication rates: Standard, Fast and High-speed mode. The maximum data rate can be as high as 3.4\,MBit/s.\\
+To establish communication, the SDA line is pulled low by the SDA bus, while the SCL bus remains high. This implies, that I$^2$C requires to have a high voltage level by default. This is done by connecting SDA and SCL to the supply voltage (or IO voltage) through pull-up resistors of a generic value (e.g. 10\,k$\Omega$). The specific sizing of the pull-up resistors are usually defined or recommended in the slave manufacturer's datasheet. During active communication, data is transmitted byte-wise and is synchronized by the clock speed. Communication comes to a halt after a rising edge on the SDA bus has been detected, while the SCL line is also high. This implies, that SCL and SDA may never be HIGH at the same time as it would trigger this stop sequence.\\
+One of the major downsides of the I$^2$C is that only one device can be called at a time, meaning that devices would have to be called sequentially. Furthermore, there may only be on slave per I$^2$C bus, which in comparison to communication protocols such as CAN (will not be discussed further), is not suitable for communications with multiple microcontrollers that may need to be established as masters themselves (e.g. communications between subsystems which each have their own sensors).
+
 \subsection{Universal Asynchronous Receiver-Transmitter (UART)}
 \subsection{Serial Peripheral Interface (SPI)}
 \subsection{Comparison}
