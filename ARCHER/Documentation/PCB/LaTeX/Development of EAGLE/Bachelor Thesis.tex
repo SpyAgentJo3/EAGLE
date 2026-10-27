@@ -220,6 +220,7 @@ To illustrate some of the decisions made within the design phase of EAGLE, it is
 \subsection{Inverting Schmitt Trigger}
 
 \section{Software Concepts} 
+Any software on potentially dangerous systems has to be maintainable, easily understandable and above all reliable. In order to achieve this, it is important to utilize commonly used software concepts, which have proven to be reliable. Such concepts will be discussed within this chapter.
 
 \subsection{State Machines}\label{sec:state_machine}
 State machines or Finite State Machine are a commonly used concept in software engineering and generally describes a system which can only be in one state of a finite number of state at a time. It is a event-driven and reactive system which can change its state based on certain events happening or conditions that are met.\\
@@ -233,6 +234,8 @@ State machines do not need to follow a linear stream of states. It is common tha
 \section{PCB Design}
 
 \section{Communication Protocols}
+Embedded use various different common communication protocols such as I$^2$C, SPI, UART and CAN (not discussed within this thesis). To evaluate the use-case and best fit for EAGLE, it is important to understand the complexity, advantages and disadvantages of each protocol. To achieve said comparison, the protocols I$^2$C, SPI and UART will be discussed in more detail and lastly compared within this chapter.
+
 \subsection{Inter-Integrated Circuit (I$^2$C)\footnote{The information contained within this chapter on I$^2$C has been taken from the document "I2C-Bus" by Ramesh Sathiyamoorthy\cite{I2C}, which was uploaded to the online forum mikrocontroller.net}}
 I$^2$C is a communcation protocol developed by Philips semiconductors in 1982. The acronym, standing for "Inter-Integrated-Circuit" refers to the use case of I$^2$C, which is to communicate between two or more integrated circuits (ICs) such as a microcontroller and its peripherals such as sensors.\\
 I$^2$C is an synchronous serial communication bus, which consists of a data line, commonly referred to as "SDA" and a clock signal line, also known as "SCL". It follows the master-slave-principle, meaning that there is a central controller which dictates the clock speed to synchronize the communication over the data line with the peripherals (slaves) to avoid overlapping clock signals. A master can communicate with up to 128 devices on the same data lines by differentiating each slave by an individual address. This means that two slaves can never have the same address to avoid collision because all slaves are connected to the same data lines.\\
@@ -240,9 +243,47 @@ Communication between master and slave is initiated by broadcasting the address 
 To establish communication, the SDA line is pulled low by the SDA bus, while the SCL bus remains high. This implies, that I$^2$C requires to have a high voltage level by default. This is done by connecting SDA and SCL to the supply voltage (or IO voltage) through pull-up resistors of a generic value (e.g. 10\,k$\Omega$). The specific sizing of the pull-up resistors are usually defined or recommended in the slave manufacturer's datasheet. During active communication, data is transmitted byte-wise and is synchronized by the clock speed. Communication comes to a halt after a rising edge on the SDA bus has been detected, while the SCL line is also high. This implies, that SCL and SDA may never be HIGH at the same time as it would trigger this stop sequence.\\
 One of the major downsides of the I$^2$C is that only one device can be called at a time, meaning that devices would have to be called sequentially. Furthermore, there may only be on slave per I$^2$C bus, which in comparison to communication protocols such as CAN (will not be discussed further), is not suitable for communications with multiple microcontrollers that may need to be established as masters themselves (e.g. communications between subsystems which each have their own sensors).
 
-\subsection{Universal Asynchronous Receiver-Transmitter (UART)}
-\subsection{Serial Peripheral Interface (SPI)}
+\subsection{Universal Asynchronous Receiver-Transmitter (UART)\footnote{The information contained within this chapter on UART is based on the online article "Understanding UART" by the company Rhode \& Schwarz\cite{UART}}}
+Universal Asynchronous Receiver-Transmitter, better known as "UART", is a serial communication protocol which transmits data asynchronously, meaning that data does not follow a common clock signal, but sending and receiving can happen at different times. Communication via UART can be simplex (one-way communication), half-duplex (both-way communication, one communication mode at a time) or full-duplex (both-way communication, both modes at the same time).\\
+Usage of UART has decreased over the last years with the establishment of faster serial communication protocols such as I$^2$C and SPI. However, most microcontrollers (e.g. ESP32 or Arudinos) still implement UART as a bus to flash new software via a USB to UART converters, but it can also be used to communicate with external devices that use e.g. an RS-232 interface for communication.\\
+UART uses two buses commonly referred to as "TX" (Transmitter) and "RX" (Receiver). Since UART does not establish a master, all connected devices have the same authority and priority on a bus, meaning that the UART pins have to be inverted on the other end of the communication path. This means that the RX of the first device has to go to the TX of the other device and vice-versa for the TX of the first device. Additionally, only two devices can communicate over the same two buses, because UART does not have a way to differentiate between devices like I$^2$C or SPI. It is possible to have multiple devices listening to the same transmissions, but it is not possible to write to the same line.
+Since the transmitter and receiver do not share a common clock signal, both devices have to be initialized to the same baud/data rate (commonly 9600 baud) in order to allow reading and writing at the same speed. To send data UART uses data frames, which contain start and stop bits as well as the data bits and a parity bit as seen in figure \ref{fig:UART}.
+
+\begin{figure}[H]
+	\centering
+	\captionsetup{font=footnotesize}
+	\includegraphics[width=11cm]{UART.jpg}
+	\caption[figure]{Typical UART data frame structure\cite{UART}}
+	\label{fig:UART}
+\end{figure}
+
+Since UART does not follow a master-slave-principle communication is not established by announcement to the slave, which is why the communication is initiated by a start bit that tells the other bus that there is data coming in. The stop bit, in turn, tells the other device that the data frame has been fully transmitted. The actual data bits (user data) is up to 9 bits long (commonly 7 to 8 bits). At the end of the user data, an optional parity bit can be inserted that can be used for error detection. It relays if the total number of 1's in the data frame has been odd or even, which can indicate an error, if the received data has a different parity.
+
+\subsection{Serial Peripheral Interface (SPI)\footnote{The information on SPI within this chapter has been gotten from the online article "Why and How to Use the Serial Peripheral Interface to Simplify Connections Between Multiple Devices" written by Art Pini\cite{SPI} and published on DigiKey's forum}}
+The Serial Peripheral Interface (SPI) is a synchronous serial communication protocol developed by Motorola in 1985. SPI's main use-case lies in short communication path applications such as connection between microprocessors and peripherals such as sensors. Similarly to I$^2$C, SPI uses a master-slave-principle at full-duplex, but instead of using a addresses to differentiate between its slaves, it uses a hardware select pin to choose the peripheral or slave it wants to communicate with, with clock speeds of up to 10\,MHz.\\
+SPI uses 4 pins for communication. For data transmitting and receiving, it uses the MOSI (Master Out Slave In) and MISO (Master In Slave Out) pins, which, as the name suggests) are either the receiving pin or the transmitting pin (seen from the master). As already mentioned, SPI is a synchronous protocol, which means communication follows a common clock signal, which is provided by the SCK (clock) pin. Lastly, the slave needs to provide a chip select (CS) pin to select the slave it wants to communicate with.\\
+Because SPI uses a chip select that determines the communication length, the transmitted byte stream can be as long as needed, as the only thing terminating or starting the communication between the master and slave is said CS pin. If said pin is not changed, the state of the communication remains the same.\\
+If communication with multiple slaves is not desired, a digital output has to be used as a CS pin for each individual peripheral. This is particularly important if the communication is not one-way. If two peripherals were "selected", both would try to send data to the same data line, which would overlap the signals and cause the data to be corrupted. SPI devices are usually "active low", meaning that the CS pins are usually kept high and are pulled low to "select" a slave. Similarly to I$^2$C, the data lines MISO and MOSI also need pull-up resistors (typically 10\,k$\Omega$). To top communication, the CS pin is then put back to the high value.
+
 \subsection{Comparison}
+I$^2$C, UART and SPI are among the most commonly used communication protocols in embedded systems and have established themselves as the standard for communication with sensors and similar peripherals. However, each protocol comes with its own set of advantaged and disadvantages.
+
+\begin{table}[htbp]
+	\centering
+	\caption{Comparison of communication protocols}
+	\label{tab:communication_protocols}
+	\begin{tabular}{|c|c|c|c|c|} \hline
+		\textbf{Protocol} & \textbf{Available modes} & \textbf{Number of pins needed} & \textbf{Devices per interface\tablefootnote{Only including peripherals}} & \textbf{Max. frequency} \\ \hline\hline
+		I$^2$C & Half-Duplex & 2 & 128 & 3.4\,MBit/s \\ \hline
+		UART & \makecell{Simplex\\Half-Duplex\\Full-Duplex} & 2 & 1 & N/A\tablefootnote{Hardware reliant, 115.2\,kBaud standard} \\ \hline
+		SPI & \makecell{Simplex\\Half-Duplex\\Full-Duplex} & Min. 4 & $\infty$\tablefootnote{Limited by amount of digital outputs available as CS pins} & 10\,MHz \\ \hline
+	\end{tabular}
+\end{table}
+
+As seen in table \ref{tab:communication_protocols} I$^2$C only allows half-duplex, whereas the other devices allow for every communication mode. However, it does allow up to 128 devices on just two pins (given that every device has an individual address), which is very cheap when considering the amount of peripherals could exceed ten. For that reason, UART is only really reasonable for communication that does not require a master and slave, such as the communication between two microcontrollers. Additionally, SPI quickly becomes a hardware bottleneck as the amount of digital outputs needed for CS might exceed the available or needed pins for other tasks. On the other hand, SPI can be used for higher polling speeds, if the required rate exceeds I$^2$C's maximum frequency of 3.4\,MBit/s.
+In summary, I$^2$C is the most versatile when it comes to having many slaves at the same time e.g. in a system with many sensors. SPI becomes more reasonable for higher communication speeds and UART can be used for communication between e.g. two microcontrollers as it does not establish a master-slave-relationship.
+
+
 
 \section{Sounding Rocket Recovery Systems}
 The term "sounding rocket" refers to a suborbital class rocket, which usually only goes to hundreds of kilometers in altitude in order to reach space and achieve a certain amount of zero gravity. This results in the vehicle falling back down to earth after a short amount of time in space. Every sounding rocket features some form of recovery since a free-falling rocket at speeds much higher than the speed of sound poses too much of a risk for nearby people and personnel. Whilst modern orbital class rockets are either expendable (e.g. Ariane\,6) or recovered using propulsive landing methods (e.g. SpaceX Falcon\,9), sounding rockets usually rely on parachutes. This is due to the fact, that the main goal of sounding rockets is to provide a short time in free-fall or zero gravity for experiments\cite{DLRsoundingRockets}, which could otherwise not be completed within earth's atmosphere. This means that the main goal is to maximize payload capacity and minimize the complexity and cost. This is usually achieved by relying on a "simpler" architecture than bi-liquid rockets, such as hybrid or solid motors. For simplicity, only solid motors will be discussed.\\
