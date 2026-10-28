@@ -215,9 +215,91 @@ To comply with these objectives, EAGLE will feature a variety of sensors and dea
 To illustrate some of the decisions made within the design phase of EAGLE, it is important to first get a basic understanding of the fundamentals of sounding rocket recovery, avionics architecture and PCB design. This chapter deals with said fundamentals and aims to highlight the most important theoretical topics.
 
 \section{Electrical Design}
-\subsection{Voltage Management (RC Circuit)}
+
+\subsection{RC-Based Voltage Stabilization of Integrated Circuits}
+Stable supply voltages are essential for the reliable operation of integrated circuits (ICs). Variations in the supply voltage can occur due to switching activity, sudden changes in load current, electromagnetic interference, and parasitic impedances in the power-distribution network. These disturbances can affect the performance and reliability of an IC. Resistor–capacitor (RC) networks and decoupling capacitors are commonly used to attenuate supply noise and reduce transient voltage fluctuations\cite{LowPassFilterConsiderations},\cite{LowPassFilterPerformance}.
+
+A first-order RC low-pass filter consists of a resistor (R) connected in series with the supply and a capacitor (C) connected between the output and ground. Its behavior can be described using Kirchhoff's current law:
+
+\begin{align}
+	\frac{v_{\mathrm{in}}(t)-v_{\mathrm{out}}(t)}{R} = C\frac{\text{d}v_{\mathrm{out}}(t)}{\text{d}t}
+\end{align}
+
+Applying the Laplace transform under zero initial conditions yields the transfer function:
+
+\begin{align}
+	H(s)=\frac{V_{\mathrm{out}}(s)}{V_{\mathrm{in}}(s)} = \frac{1}{1+sRC}
+\end{align}
+
+The cutoff frequency $f_c$, at which the output amplitude decreases by approximately 3 dB, is given by
+
+\begin{align}
+	f_c=\frac{1}{2\pi RC}
+\end{align}
+
+\begin{figure}[H]
+	\centering
+	\captionsetup{font=footnotesize}
+	\includegraphics[width=\textwidth]{Low-Pass-Filters.jpg}
+	\caption[figure]{Typical Low-Pass-Filter circuit and frequency response\cite{LowPassFilter}}
+	\label{fig:Low-Pass-Filter}
+\end{figure}
+
+Frequencies significantly above the cutoff frequency are attenuated, whereas lower-frequency components pass with relatively little attenuation. Increasing either the resistance or capacitance lowers the cutoff frequency, improving the attenuation of higher-frequency disturbances. However, a series resistor also introduces a DC voltage drop under load and may limit the current available during rapid load changes\cite{FundamentalsElectricalCircuits}.
+
+The transient behavior of an RC circuit is determined by its time constant, ($\tau = RC$). For a step input from zero to a constant voltage ($V_S$), the capacitor voltage follows the exponential response
+
+\begin{align}
+	v_C(t) = V_S\left(1-e^{-t/RC}\right) = V_S\left(1-e^{-t/\tau}\right)
+\end{align}
+
+
+After one time constant, the capacitor reaches approximately 63.2\,\% of its final voltage, while after five time constants it reaches approximately 99.3\,\%. This behavior characterizes the response speed of a first-order RC circuit and illustrates the trade-off between filtering and transient response\cite{FundamentalsElectricalCircuits}.
+
+Decoupling capacitors provide an additional means of stabilizing IC supply voltages. Connected between the supply and ground pins, they act as local charge reservoirs that can supply short-duration increases in current demand. The relationship between capacitor current and voltage is
+
+\begin{align}
+	i_C(t)=C\frac{\text{d}v_C(t)}{\text{d}t}
+\end{align}
+
+For an approximately constant current demand ($\Delta I$) supplied by the capacitor over a time interval ($\Delta t$), the resulting voltage droop can be estimated as
+
+\begin{align}
+	\Delta V\approx\frac{\Delta I\Delta t}{C}
+\end{align}
+
+This relationship shows that a larger capacitance reduces the voltage deviation for a given current demand and duration. In practical circuits, however, the effectiveness of decoupling also depends on the capacitor's equivalent series resistance (ESR), equivalent series inductance (ESL), and the parasitic impedances of PCB traces and connections. Consequently, decoupling capacitors should be placed close to the relevant IC supply pins to minimize the inductance of the current path. Local ceramic capacitors are often combined with larger bulk capacitors to address transient demands over different time scales, with the final values selected according to the IC datasheet and application requirements\cite{LowPassFilterConsiderations},\cite{LowPassFilterPerformance}.
+
+Although RC filters and decoupling capacitors reduce supply noise and transient voltage fluctuations, they do not independently provide precise DC voltage regulation. Their effectiveness depends on the circuit topology, component values, load characteristics, and physical implementation. Therefore, RC-based filtering and decoupling should be considered complementary measures within the power-distribution network, typically used alongside an active voltage regulator to support reliable IC operation\cite{LowPassFilterConsiderations},\cite{LowPassFilterPerformance}.
+
+
 \subsection{Metal-Oxide-Semiconductor Field-Fffect Transistor (MOSFET)}
+
+
 \subsection{Inverting Schmitt Trigger}
+Inverting Schmitt triggers are electronic circuits used to convert slowly varying or noisy input signals into well-defined digital output signals. Furthermore, they can be used to invert a swtiching voltage provided by e.g. a digital output. Unlike conventional inverters, they incorporate hysteresis, meaning that the switching threshold depends on whether the input voltage is increasing or decreasing. This behavior improves noise immunity and prevents unwanted output transitions when the input fluctuates near the switching threshold.
+
+\begin{figure}[H]
+	\centering
+	\captionsetup{font=footnotesize}
+	\includegraphics[width=\textwidth]{Inverting-Schmitt-Trigger.jpg}
+	\caption{Typical functionality of inverting Schmitt-Triggers\cite{UnderstandingSchmittTriggers}}
+	\label{fig:Schmitt-Trigger}
+\end{figure}
+
+The operation of an inverting Schmitt trigger is characterized by two threshold voltages: the upper threshold ($V_{T+}$) and the lower threshold ($V_{T-}$). When the input voltage rises above ($V_{T+}$), the output switches from HIGH to LOW. Conversely, when the input voltage falls below ($V_{T-}$), the output switches from LOW to HIGH. Between these thresholds, the output retains its previous state. The width of the hysteresis window is defined as
+
+\begin{align}
+	V_H=V_{T+}-V_{T-}
+\end{align}
+
+A larger hysteresis window generally provides greater tolerance to input noise, provided that the input signal still crosses both switching thresholds. The two distinct thresholds prevent small voltage fluctuations from repeatedly triggering the circuit.
+
+In IC applications, Schmitt-trigger inputs are particularly useful for signal conditioning, switch debouncing, and processing signals with slow rise or fall times. They can also be combined with RC networks to create power-on reset delays or controlled signal transitions. In such configurations, the resistor and capacitor determine the rate at which the input voltage changes, while the Schmitt trigger converts this gradual voltage change into a clean digital transition. The resulting behavior depends on the RC time constant, the switching thresholds, and the IC supply voltage.
+
+Although inverting Schmitt triggers improve noise immunity and switching reliability, their threshold voltages and hysteresis characteristics depend on the selected device. Therefore, the manufacturer's datasheet should be consulted when selecting component values or determining timing behavior. Schmitt triggers do not eliminate all noise; disturbances large enough to cross the relevant switching threshold can still change the output state.
+
+
 
 \section{Software Concepts} 
 Any software on potentially dangerous systems has to be maintainable, easily understandable and above all reliable. In order to achieve this, it is important to utilize commonly used software concepts, which have proven to be reliable. Such concepts will be discussed within this chapter.
