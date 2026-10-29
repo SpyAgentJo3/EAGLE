@@ -215,6 +215,7 @@ To comply with these objectives, EAGLE will feature a variety of sensors and dea
 To illustrate some of the decisions made within the design phase of EAGLE, it is important to first get a basic understanding of the fundamentals of sounding rocket recovery, avionics architecture and PCB design. This chapter deals with said fundamentals and aims to highlight the most important theoretical topics.
 
 \section{Electrical Design}
+Whilst EAGLES's IC circuits are mostly based on datasheets and supplier recommendations, its pyro-channels are fully self-developed. To understand both the IC circuits and the pyro-channels, it is important to understand certain electrical concepts and components, which will be explained in this chapter.
 
 \subsection{RC-Based Voltage Stabilization of Integrated Circuits}
 Stable supply voltages are essential for the reliable operation of integrated circuits (ICs). Variations in the supply voltage can occur due to switching activity, sudden changes in load current, electromagnetic interference, and parasitic impedances in the power-distribution network. These disturbances can affect the performance and reliability of an IC. Resistor–capacitor (RC) networks and decoupling capacitors are commonly used to attenuate supply noise and reduce transient voltage fluctuations\cite{LowPassFilterConsiderations},\cite{LowPassFilterPerformance}.
@@ -673,7 +674,7 @@ As a last step, the vehicle enters the "Landed" state, which tells the telemetry
 If there are any off nominal reports during the setup process, the "Abort" state may be entered, which tells the operator on the ground to hold the launch. However, this state does not have the capabilities to prevent the launch other than advice the operator to stand down. From an abort state, the telemetry can be used to make a decision whether to recycle the attempt, which means that the state machine would remotely be set back into the "Pad Idle" state by an operator or whether to abort the launch attempt and take the rocket off of the launch rail.
 
 \subsection{State Transitions}
-Each transition between states is governed by one or more boolean trigger conditions derived from sensor readings and system checks. Table \ref{tab:setup_state_transitions} and table \ref{tab:flight_state_transitions} specify these conditions for the setup phase and flight phase, respectively. Within these tables, a dash ("–") denotes a don't-care condition: the corresponding flag has no influence on whether the transition occurs, and may hold either value.\\
+Each transition between states is governed by one or more boolean trigger conditions derived from sensor readings and system checks. Table \ref{tab:setup_state_transitions} and table \ref{tab:flight_state_transitions} specify these conditions for the setup phase and flight phase, respectively. Within these tables, a dash ("–") denotes a "do not-care condition": the corresponding flag has no influence on whether the transition occurs, and may hold either value.\\
 Following power-up, the system resides in the initial setup/pad idle state (0). If both the sensors established and continuity flags evaluate to TRUE, initialization is considered complete and the system transitions to the initialized state (1), independent of the armed flag's state at that point. Conversely, if both flags are FALSE, setup is deemed to have failed and the system transitions directly to the abort state (8).\\
 From state 1, the system remains unarmed as long as continuity is maintained and the armed flag is FALSE (transition $1\rightarrow1$). If the armed flag becomes TRUE while continuity is still present, the system transitions to the armed state (2). Should continuity be lost at any point while in state 1, the system transitions to the abort state (8), regardless of the other flags.\\
 State 2 behaves analogously with respect to continuity: the system remains in state 2 as long as continuity is present ($2\rightarrow2$), and transitions to the abort state (8) if continuity is lost.\\
@@ -709,7 +710,23 @@ Similarly to the state machine, the software is split into a main function and a
 Because of the time critical nature of the system, it is important that the software runs deterministic i.e. that it runs its main loop in a pre-defined amount of time. This is important, to avoid unected behavior. This can be enforced by e.g. using interrupts, which completely stops the loop iteration if this set amount of time has been exceeded. The time for the loop to finish is set by creating a statistic about how long the loop takes to run once over multiple iterations, but can also be pre-defined as a requirement. In this case, it was decided to base it on the average execution time, because whilst it is important to have a deterministic code, parachute deployment may happen within the vicinity of apogee and the main deployment altitude as discussed in subchapter \ref{sec:euroc_rules}.\\
 
 \subsection{Main Loop Architecture}
-GRAFIK: READING -> CONVERSION -> PROCESSING -> STATE MACHINE -> OUTPUTS
+The main loop, which continuously runs ones the setup has been completed, is the core logic of the entire code base. To stay with the readability, maintainability and modularized concept of the state machine, the main loop is split into its core functionalities: Reading, conversion, processing, state machine and writing outputs (as shown in figure \ref{fig:Main_Loop_architecture}).
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth]{Main loop.png}
+	\caption{Software architecture}
+	\label{fig:Main_Loop_architecture}
+\end{figure}
+
+By splitting the functionality, the software becomes more scalable, because to add functionality, only small parts of the code have to be changed, which are at a defined position as opposed to being one continuous loop or function.\\
+As the name suggests, the "Read sensors" part is meant to read any IO's available. This could be something as trivial as a digital input or a sensor. At this point, only data directly provided by the sensor is available.\\
+In the conversion step that data is converted from binary values from the sensors into physical units such as bar, m or m/s$^2$. It also converts the physical units into values that are not directly provided by sensors such as integrated values or converted values like the conversion from bar to m using the barometric formula.\\
+The processing does real-time data processing using common concepts like a moving average or a kalman filter. This increases the accuracy of the data, which in turn makes the detection of milestones more reliable. Additionally, the converted and processed data is then used to set flags such as "apogee reached" which will be used in the state machine to assess the state and decide how to continue.\\
+The state machine uses the processed data and evaluate its state. Based on the state it is in, it would trigger certain actions, such as payload deployment. The state machine defines what outputs will need to be set based on the state transition and trigger additional logic, if necessary.\\
+Finally, the outputs, which have been defined in the state machine are written to the actual hardware i.e. the output pins or buses. This is done as a last step so that there are no race-conditions created, which would cause two different states being set to the same output.\\ 
+As shown in figure \ref{fig:Main_Loop_architecture}, communication with other ASCENT modules happens asynchronously. This means that the communication does not happen cyclically within the loop and outside of the loops time frame. This is done by using a software interrupt, which is triggered by the telemetry module. This is done by assigning highest scheduler priority to the communication task when the telemetry module queries/requests communication. This immediately stops the ongoing tasks until communication is done. Optionally, this could also be done as a parallel task on another CPU core, if applicable, so the main loop is never interrupted.\\
+
 \newpage
 
 \chapter{Preliminary Design Phase}
@@ -897,7 +914,7 @@ Some (sub-)chapters have been rewritten, reworked or corrected using generative 
 \begin{center}
 	\captionof{table}{Inertial Measurement Unit(IMU) characteristics Nr.1}	
 	\label{tab:sensor_imu1}
-	\begin{adjustbox}{width=1.15\textwidth}		 
+	\begin{adjustbox}{width=\textwidth}		 
 		\begin{tabular}{|r||c|c|c|c|c||c|c|c|c|} \hline		
 			& \multicolumn{5}{c||}{\textbf{BMI160}} & \multicolumn{4}{c|}{\textbf{MPU6500}}\\ \hline
 			
