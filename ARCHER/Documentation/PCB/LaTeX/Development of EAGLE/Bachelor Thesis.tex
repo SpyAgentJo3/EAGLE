@@ -766,6 +766,19 @@ The ICM-42688-P supports ODR's between 1.5625\,Hz and 32000\,Hz with a maximum p
 The ICM-45686 is from the same product family as the ICM-42688-P. Different to the other mentioned IMU's, it can be set to acceleration ranges from 2\,g to 32\,g, with the same 16-bit resolution and angular velocity ranges of 15.625\,$\frac{\text{deg}}{\text{s}}$ to 4000\,$\frac{\text{deg}}{\text{s}}$. The acceleration noise is not constant across ranges, but across axis. For measurement ranges from 2\,g to 8\,g, the expected noise lies at 0.7\,mg-rms, whereas it lies at 0.8\,mg-rms for 16\,g and 1.1\,mg-rms for 32\,g. The angular velocity has a constant noise across all settings and axis of 0.038\,$\frac{\text{deg}}{\text{s}}$-rms.\\
 The ICM-45686 allows a low noise mode and a low power mode, which determine the ODR ranges. In low noise mode a new data set is ready at a frequency bewteen 12.5\,Hz and 6400\,Hz. In lowe power mode, this range changes to 1.5625\,Hz and 400\,Hz. At its peak, it draws 1.386\,mW at 3.3\,V. Its supply voltage can vary from 1.71\,V to 3.6\,V.
 
+\section{Accelerometer}
+Similar to the IMU, the two accelerometers, which are part of EAGLE, provide 3-axis acceleration data to provide additional sources for altitude and velocity, which will be used to estimate the state of the rocket. On top of that, the accelerometers share the same important metrics that have to be taken into account for the component selection. These metrics are: measurement range, resolution, noise, sampling frequency and power usage. Added bonuses are a preexisting software library and availability as a breakout board. This sub-chapter will therefore only highlight these metrics and a more complete overview can be found in table \ref{tab:sensor_acc} in the appendix.
+
+\subsection{ADXL345}
+The ADXL345 is a accelerometer manufactured by Analog Devices. It provides varying measurement ranges from 2\,g to 16\,g. The resolution with a 10 bit default resolution, but a full range resolution between 10 bits and 13 bits, depending on the setting. The noise is also varying depending on the setting. At 2\,g and 4\,g the noise is 0.75\,LSB-rms\footnote{LSB = "Least Significant Bit" and refers to the smallest measurement step, which makes it relative to the measurement range}. At 8\,g and 16\,g the noise increases to 1.1\,LSB-rms. Its supply voltage ranges from 2\,V to 3.6\,V, whilst 2.5\,V is typical. This leads to a maximum power draw of 0.5\,mW at 3.6\,V. The power draw is related to the ODR, which can be set within the range from 0.1\,Hz to 3200\,Hz. ADXL series accelerometers are genuinely well supported sensors, with both hardware and software support from better known companies such as Adafruit.
+
+\subsection{ADXL343}
+The ADXL343 is from the same product family as the ADXL345 and therefore has similar or even the same advantages when it comes to the hardware and software support. They also share the same measurement ranges and resolutions from 2\,g to 16\,g. However, the ADXL343 has a constant noise level across all ranges at 1.1\,LSB-rms. The supply voltage and ODR also have the same ranges of 2\,V to 3.6\,V and 0.1\,Hz to 3200\,Hz. The maximum power draw is also 0.5\,mW.
+
+\subsection{KX134}
+The KX134 is a 16-bit accelerometer manufactured by ROHM Semiconductor with measurement ranges from 8\,g to 64\,g. The noise is constant across all settings at 0.7\,mg-rms. The supply voltage ranges from 1.7\,V to 3.6\,V with a typical supply of 2.5\,V with a maximum power draw of 0.488\,mW at 3.3\,V, which can also be adjusted by selecting either low power or performance mode. The ODR range ranges from 0.781\,Hz to 25.6\,kHz. The KX134 is not as widely spread as the ADXL345/343, but also has public software support with a custom library for reading the data.
+
+
 \section{Pyrotechnic Channels}
 
 \section{Design Evaluation and Revision}
@@ -783,6 +796,8 @@ The ICM-45686 has a significantly lower power consumption, but has a worse noise
 Since the ICM-42688-P has better or similar hardware metrics in comparison to the ICM-45686 in most areas and it has proven itself to be reliable during testing, the ICM-42688-P was chosen as the IMU for EAGLE. It grants more flexibility when it comes to the ODR and provides a reading with less noise. It also supports a large range of supply voltages, which makes it less fragile to voltage spikes or drops.
 
 \subsection{Accelerometer}
+One of the requirement set is that no two sensors of the same product family are selected to avoid systematic issues that could lead to the same failure mode on both sensors. Therefore, the KX134, which already stands out with superior metrics, is selected as one of EAGLE's two accelerometers. The KX134 also covers higher G cases, in case the acceleration upon liftoff exceeds simulated values. The other two accelerometers are essentially identical in most metrics. However, the ADXL343 features a constant noise level across all measurement ranges, which makes data processing easier, similar to the IMU. Therefore, the ADXL343 was chosen as the second accelerometer.
+
 \subsection{Pressure Sensor}
 
 \newpage
