@@ -178,6 +178,7 @@ The development process of a printed circuit board for this system according to 
 		\acro{PSS}[PSS]{\dotfill Pressure Sensor}
 		\acro{IMU}[IMU]{\dotfill Inertial Measurement Unit}
 		\acro{ODR}[ODR]{\dotfill Output Data Rate}
+		\acro{OSR}[OSR]{\dotfill Oversampling Ratio}
 	\end{acronym}
 	
 	
@@ -501,8 +502,10 @@ The resulting equation describes the temperature gradient within the atmosphere 
 The final equation can be simplified using the standard atmosphere,  which is defined by the "International Civil Aviation Organization" (IACO). The standard atmosphere defines sea level as reference height $h_0$, 15\,°C or 288.15\,K as the reference temperature $T(h_0)$ and 1013.25\,hPa as the reference pressure $p(h_0)$\cite{StandardAtmosphere}. This results in the final formula of both the pressure at altitude $h$ and the altitude itself being:
 
 \begin{align}
-	p(h) &= 1013.25\cdot \left(1 - \frac{0.0065\,\frac{\text{K}}{\text{m}}\cdot h}{288.15\,\text{K}}\right)^{5.255}\,\text{hPa}\\
+	p(h) &= 1013.25\cdot \left(1 - \frac{0.0065\,\frac{\text{K}}{\text{m}}\cdot h}{288.15\,\text{K}}\right)^{5.255}\,\text{hPa}
+	\label{eqn:barometric_formula_pressure}\\
 	h &= \frac{288.15\,\text{K}}{0.0065\,\frac{\text{K}}{\text{m}}}\left(1 - \left(\frac{p(h)}{1013.25\,\text{hPa}}\right)^{\frac{1}{5.255}}\right)
+	\label{eqn:barometric_formula_altitude}
 \end{align}
 
 \section{Nyquist Criteria}
@@ -778,6 +781,36 @@ The ADXL343 is from the same product family as the ADXL345 and therefore has sim
 \subsection{KX134}
 The KX134 is a 16-bit accelerometer manufactured by ROHM Semiconductor with measurement ranges from 8\,g to 64\,g. The noise is constant across all settings at 0.7\,mg-rms. The supply voltage ranges from 1.7\,V to 3.6\,V with a typical supply of 2.5\,V with a maximum power draw of 0.488\,mW at 3.3\,V, which can also be adjusted by selecting either low power or performance mode. The ODR range ranges from 0.781\,Hz to 25.6\,kHz. The KX134 is not as widely spread as the ADXL345/343, but also has public software support with a custom library for reading the data.
 
+\section{Pressure sensor}
+A pressure sensor can serve as an additional source of the rockets altitude by using the pressure equilibrium of the outside atmospheric pressure. It can be translated into an altitude using the barometric formula, shown in equation \ref{eqn:barometric_formula_altitude}. This however only works for velocities well below the speed of sound (rule of thumb Mach 0.7) as this is where transient effects play a bigger role. Especially in lower altitude, this can be a great indicator of the altitude as it is not dependent on prior measurements and integration, but can be directly translated to altitude, which means error propagation is minimized to the pressure measurement itself. Since apogee has low velocities, the pressure sensor can serve as an accurate detection mechanism.\\
+Similarly to the IMU and accelerometers, important metrics for this type of sensors are the measurement range, resolution, noise, sampling frequency and power usage. This sub-chapter will once again serve as a short introduction with the most important characteristics. A more detail view can be found in table \ref{tab:sensor_pss} in the appendix.
+
+\subsection{Measurement range}
+With ARCHER being expected to reach an altitude of approximately 9\,km, it is important to determine the measurement range required for the pressure sensor using the barometric formula from equation \ref{eqn:barometric_formula_pressure} using $h \approx 9\,\text{km} = 9000\,\text{m}$:
+
+\begin{align*}
+	p(h) &= 1013.25\cdot \left(1 - \frac{0.0065\,\frac{\text{K}}{\text{m}}\cdot h}{288.15\,\text{K}}\right)^{5.255}\,\text{hPa}\\
+	p(h=9000\,\text{m})&= 1013.25\cdot \left(1 - \frac{0.0065\,\frac{\text{K}}{\text{m}}\cdot 9000\,\text{m}}{288.15\,\text{K}}\right)^{5.255}\,\text{hPa}\\
+	p(h=9000\,\text{m})&= 307.485\,\text{hPa} = 0.307\,\text{bar}	
+\end{align*}
+
+As shown in the calculation above, the required pressure levels are between 1013.25\,hPa (pressure at sea-level) and at least 307.485\,hPa, although less than 300\,hPa is desired to have a safety factor. This is a hard requirement for all sensors in question.
+
+\subsection{MS561101BA03-50}
+The MS561101BA03-50 is a pressure sensor and altimeter with an integrated temperature sensor made by the  TE Connectivity. It has a total pressure range of 10\,hPa to 1200\,hPa\footnote{In extended (potentially non-linear) range}, which fits into the above calculated pressure envelope. It measures with a resolution of 24 bits and an absolute accuracy of $\pm2.5\,$hPa. It does so with a noise level, which is dependent on the oversampling ratio (OSR). The noise level is at its maximum at an OSR of 256, with a noise level of 6.5\,Pa-rms. The MS5611 can be sampled at a maximum I$^2$C rate of 400\,kHz with a supply voltage between 18.\, and 3.6\,V. The peak power consumption sits at $\approx$4.62\,mW. but is also dependent on the OSR.\\
+The integrated temperature sensor also has a 24-bit resolution and measures with temperatures between -40\,°C and +85\,°C with an accuracy of $\pm$2\,°C.
+
+\subsection{MS560702BA03-50}
+The MS560702BA03-50 is also a 24-bit pressure and temperature by the company TC Connectivity and from the same product family as the MS5611. Its total extended measurement range lies between 10\,hPa and 2000\,hPa and is therefore well within the acceptable tolerance. The absolute accuracy measures to $\pm$1.5\,hPa with a maximum noise of 13\,Pa-rms depending on the OSR. Similarly to the MS5611, the MS5607 requires a voltage supply between 1.8\,V and 3.6\,V and can also be sampled at 400\,kHz using I$^2$C. Its peak power consumption at an OSR of 256 measures at 4.62\,mW.\\
+Its temperature sensor is identical to the MS5611's temperature sensor with a range from -40\,°C to +85\,°C. and a resolution of 24 bits.
+
+\subsection{MPL3115A2ST1}
+The MPL3115A2ST1 is a 20\,bit pressure sensor and altimeter with a temperature measuring capabilities, which was originally designed by Freescale/NXP.\\
+Its measurement capabilities ranges from 200\,hPa to 1200\,hPa with an accuracy of 4\,hPa. At an OSR of 1, the noise sits at 19\,Pa-rms. It uses a supply voltage of 1.96\,V to 3.6\,V with a peak power consumption of 6.6\,mW. Depending on the decouple capacitor, the maximum I$^2$C sampling rate is either 400\,kHz or 4\,MHz.\\
+The integrated temperature sensor only has a resolution of 12 bits and measures temperatures ranging from -40\,°C to +85\,°C with an accuracy of $\pm$3\,°C.
+
+\subsection{HSCMAND015PASA5}
+The HSCMAND015PASA5 is a temperature sensor by the company Honeywell, which was considered for EAGLE. However, it will only be briefly mentioned as its publicly documentation did not provide all of the required data to make an educated decision. Therefore, it is mentioned for completeness, but not further described. An overview of the obtained information can be found in the table \ref{tab:sensor_pss} in the appendix.
 
 \section{Pyrotechnic Channels}
 
@@ -799,7 +832,10 @@ Since the ICM-42688-P has better or similar hardware metrics in comparison to th
 One of the requirement set is that no two sensors of the same product family are selected to avoid systematic issues that could lead to the same failure mode on both sensors. Therefore, the KX134, which already stands out with superior metrics, is selected as one of EAGLE's two accelerometers. The KX134 also covers higher G cases, in case the acceleration upon liftoff exceeds simulated values. The other two accelerometers are essentially identical in most metrics. However, the ADXL343 features a constant noise level across all measurement ranges, which makes data processing easier, similar to the IMU. Therefore, the ADXL343 was chosen as the second accelerometer.
 
 \subsection{Pressure Sensor}
-
+As already mentioned in the sub-chapter about the HSCMAND015PASA5, the datasheet that was used for research did not provide clear or full overview of its characteristics, which is why it is not deemed fit for EAGLE.\\
+Looking at almost all metrics, it becomes clear that the two sensors by the company TE Connectivity (MS5611 and MS5607) are the clear choice as they have superior resolution, accuracy, power consumption and noise. However, since it is a requirement that no two sensors are from the same product family for redundancy purposes, the MP3115 is selected as one of its pressure sensors. Whilst the MS5611 and MS5607 look superior, the MPL3115 is still a fitting sensor for EAGLE as it meets all requirements regarding the pressure envelope, which is the most important metric.\\
+For EAGLE's second pressure sensor, the MS5611 and MS5607 have to be compared to one another. They both meet the expectations when it comes to the pressure range. However, the MS5607 has a slightly higher range. This is not important as the maximum pressure that EAGLE will see at sea-level will not exceed 1012.5\,hPa (as per standard atmosphere). Therefore the LSB of the MS5611 allows for much smaller steps in the ADC. The MS5611 has a slightly worse accuracy, but a lower noise by a factor of two. The noise outweighs the accuracy, because a noisy reading will propagate into other calculations and make accurate processing more difficult. Both sensors are identical in all other metrics.\\
+Since the MS5611 outweighs the MS5607 in most key metrics, the MS5611 is chosen as the pressure sensor for EAGLE.
 \newpage
 
 \chapter{Software Implementation}
