@@ -98,7 +98,7 @@ sorting=none
 
 	{\scshape\LARGE Technische Hochschule Mittelhessen \\ und \\ Spacelfight Rocketry Gießen e.V.\par}
 	\vspace{1cm}
-	{\scshape\Large Projektarbeit\par}
+	{\scshape\Large Bachelorarbeit\par}
 	\vspace{1cm}
 	{\huge\bfseries Development of the Electronic Actuaion \& Guidance for Landing and Elevation (EAGLE) system\par}
 	\vspace{0.25cm}
@@ -278,6 +278,7 @@ Although RC filters and decoupling capacitors reduce supply noise and transient 
 
 \subsection{Metal-Oxide-Semiconductor Field-Fffect Transistor (MOSFET)}
 
+\subsection{Zener Diode}
 
 \subsection{Inverting Schmitt Trigger}
 Inverting Schmitt triggers are electronic circuits used to convert slowly varying or noisy input signals into well-defined digital output signals. Furthermore, they can be used to invert a swtiching voltage provided by e.g. a digital output. Unlike conventional inverters, they incorporate hysteresis, meaning that the switching threshold depends on whether the input voltage is increasing or decreasing. This behavior improves noise immunity and prevents unwanted output transitions when the input fluctuates near the switching threshold.
@@ -810,9 +811,37 @@ Its measurement capabilities ranges from 200\,hPa to 1200\,hPa with an accuracy 
 The integrated temperature sensor only has a resolution of 12 bits and measures temperatures ranging from -40\,°C to +85\,°C with an accuracy of $\pm$3\,°C.
 
 \subsection{HSCMAND015PASA5}
-The HSCMAND015PASA5 is a temperature sensor by the company Honeywell, which was considered for EAGLE. However, it will only be briefly mentioned as its publicly documentation did not provide all of the required data to make an educated decision. Therefore, it is mentioned for completeness, but not further described. An overview of the obtained information can be found in the table \ref{tab:sensor_pss} in the appendix.
+The HSCMAND015PASA5 is a temperature sensor by the company Honeywell, which was considered for EAGLE. However, it will only be briefly mentioned as its publicly available documentation did not provide all of the required data to make an educated decision. Therefore, it is mentioned for completeness, but not further discussed. An overview of the obtained information can be found in the table \ref{tab:sensor_pss} in the appendix.
 
 \section{Pyrotechnic Channels}
+The pyrotechnic channels are the most crucial system of EAGLE. It is the analog circuit that turns a digital output of the micrcontroller into a signal strong enough to ignite the pyrotechnic charges of the recovery system. It is also used to detect if a pyro igniter has been installed or not by detecting continuity of the pyro channel. This chapter highlights the though and design process behind the pyro channels.
+
+\subsection{Expected Behaviour}
+Before designing the circuit, it is crucial to define the expected outcome. It is required to sense the continuity of the channel as well as fire the pyro charge with a single digital output (per channel). This is to be done in a way that neither the current nor the voltage going back into the microcontroller for measurement exceeds its electrical limits. Additionally, the entire systems needs to be able to be unarmed as defined in the EuRoC system requirements. This means that the pyro charge should not fire, even if the digital output is set to a state in which it could fire. Additionally, it needs to be a redundant recovery system that is dual-deployment. Whilst the redundancy is covered by using a mandatory secondary COTS flight computer, it was decided that EAGLE should be able to redundantly cover deployment by itself, should EAGLE ever fly by itself. Therefore, EAGLE requires at least four pyro channels.\\
+
+\subsection{Pyrotechnic Igniter}
+An electric pyrotechnic igniter, which uses current and/or voltage to ignite a small pyrotechnic charge, which itself can set fire to a bigger charge. This is done by connecting a bridge resistor to a plus and minus port of a channel that can deliver the current required to heat up the resistor enough to ignite the charge. The igniter has a small internal resistance, which limits the current going through it, which is why a certain voltage is required to ignite the pyro initiator.
+
+\subsection{Continuity Measurement}
+A continuity measurement can be achieved through multiple ways. One way would be to send a sensing signal, a low voltage signal, which is low enough to not ignite a pyrotechnic charge. Using the internal resistance of the igniter, the sensing voltage can be chosen in such a way that the ignition current remains below the ignition threshold. Without the initiator connected, the circuit is discontinued and no current would reach the minus port of the pyro channel. If the igniter is connected, the current will flow through the initiator without igniting it, reaching the minus port of the connector where a sensing element can be placed. The sensing element can either be a current sensor, such as a shunt resistor or the resulting voltage at the sensing pin can be measured using the ADC of a microcontroller's analog input.
+
+\subsection{Firing Process}
+In order to ignite the charge, a pin on the microcontroller should only need to go HIGH, which would lead to the pyro voltage $V_\text{py}$ of 12\,V to reach the igniter and then setting light to the charge. One way to do this, would be to use a MOSFET as a voltage driven switch, which lets the pyro voltage $V_\text{py}$ pass through to the igniters by applying a HIGH signal from the digital output to the gate of the MOSFET. Resistors can then be used to limit the current to an acceptable level, which the power supply can safely and stably supply. In EAGLE's case, the HIGH level used by the ESP32 is 3.3\,V and the maximum current $I_\text{py} = 3\,$A.
+
+\subsection{Continuity and Firing with Single Pin}
+To do both continuity and firing with the same digital output, it is necessary that the two behaviours are swapped using only the digital output's logic level. By using a Zener diode, the firing pin, which is essentially a short to ground, can be blocked off for the sensing voltage by using the break down voltage of the diode. The breakdown voltage then needs to be higher than the voltage that is supplied by the digital output.\\
+Since the firing is supposed to happen at a HIGH signal from the digital output, the sensing voltage needs to be sent when the logic level is LOW. However, the LOW logic level of an ESP32 is $\approx$0\,V. This would not cause a current through the sensor. To supply a sensing current an inverting Schmitt-Trigger can be used to switch from 0\,V to 3.3\,V on a rising/falling edge. By doing so, the sensing line is supplied 3.3\,V when the digital output is set LOW and 0\,V when the output is set to HIGH. The Zener diode would have a breakdown voltage that is greater than 3.3\,V.\\
+The sensing line, can be switched off and on using the inverted signal using an additional MOSFET. When the output is set to HIGH and ignition is expected, the MOSFET would receive 0\,V to the gate and therefore block the sensing line protecting the sensing pin from overvoltage. Another MOSFET would get the 3.3\,V directly from the digital output and allow $V_\text{py}$ to reach the firing channel, where the voltage would be greater than the breakdown voltage of the Zener diode allowing the current to reach the igniter with a minimal voltage drop over the Zener diode. The circuit is schematically shown in figure \ref{fig:pyro_channel_drawign}:
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=.85\textwidth]{Pyro channel circuit drawing.pdf}
+	\caption{Schematic drawing of pyrotechnic channel circuit}
+	\label{fig:pyro_channel_drawign}
+\end{figure}
+
+\subsection{Arming}
+Arming can be achieved similarly to ignition using a MOSFET to limit $V_\text{Py}$ from reaching the pyrotechnic channel circuit. As shown in the systems architecture, the arming signal is coming from the telemetry module and the supply voltage for the pyro channels is coming directly from the power supply. If the arming signal is set to LOW, the MOSFET would be closed, meaning that $V_\text{py}$ can not reach the pyro channels, meaning that even if the digital output was set to HIGH, there would be no supply to create the necessary ignition current. Therefore, an arming MOSFET can be used to electrically isolate the drain of the MOSFET 1 of each pyro channel.
 
 \section{Design Evaluation and Revision}
 
