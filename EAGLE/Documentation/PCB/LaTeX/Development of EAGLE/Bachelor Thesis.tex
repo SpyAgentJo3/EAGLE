@@ -277,8 +277,41 @@ Although RC filters and decoupling capacitors reduce supply noise and transient 
 
 
 \subsection{Metal-Oxide-Semiconductor Field-Fffect Transistor (MOSFET)}
+A Metal-Oxide-Semiconductor Field-Effect Transistor (MOSFET) is a type of voltage driven transistor, meaning that it uses a voltage to regulate the current going through the transistor, unlike an bipolar junction transistor, which uses current to regulate flow. Different to other Field Effect Transistors, the MOSFET's gate is electrically isolated from the main current carrying channel. It consists of three main terminals: The gate, drain and source. The gate is what controls the current flow between drain and source by applying an electric field through a voltage to the gate to control the "resistance" of the MOSFET\cite{MOSFET}.
+
+\begin{figure}[H]
+	\centering
+	\captionsetup{font=footnotesize}
+	\includegraphics[width=.5\textwidth]{mosfet-structure.png}
+	\caption{Structure of a MOSFET\cite{MOSFET}}
+	\label{fig:MOSFET}
+\end{figure}
+
+MOSFETs can be split into N and P channel MOSFETS. An N channel MOSFET (NMOS) uses electrons to carry the current, which means that the gate-source-voltage $U_\text{GS}$ needs to be positive. A P channel MOSFET (PMOS) uses the holes of the semiconductor to carry current. It needs a negative gate-source-voltage to allow current flow. Because an NMOS uses the more mobile and fast moving electrons for transmitting current, the ON resistance is usually lower in an NMOS.\\
+A MOSFET can be split into even more categories. They can be used in Depletion- and Enhancement-Mode (only Enhancement-mode discussed). The Enhancement-mode can be used in as an electrical switch because of its high OFF resistance and low ON resistance. The difference to Depletion-mode is that the MOSFET is nominally OFF, meaning that it does not allow current to flow without applying a positive gate-source-voltage as seen in graph \ref{fig:MOSFET_Enhancement}\cite{MOSFET}:
+
+\begin{figure}[H]
+	\centering
+	\captionsetup{font=footnotesize}
+	\includegraphics[width=.5\textwidth]{eMOSFET.png}
+	\caption{Typical MOSFET behaviour in Enhancement-mode\cite{MOSFET}}
+	\label{fig:MOSFET_Enhancement}
+\end{figure}
+
+When not applying any voltage to the gate, the MOSFET cuts off the current flow entirely. When applying a high enough drain-source-voltage $V_\text{DS}$ it will go into the saturation curve of the MOSFET, meaning that it will essentially be On-Off-switch. The saturation curve is entirely component specific and needs to be considered when choosing a MOSFET.
 
 \subsection{Zener Diode}
+Zener diodes are a specific kind of diode, which have been made popular by the effect they have when applying a high reverse voltage. Usually diodes only let by a small leak current in the magnitude of nA to $\mu$A. Applying a reverse voltage that is greater then the so called "Breakdown voltage" $U_\text{Z}$ causes the blocking function of the diode to breakdown almost entirely as shown in the graph \ref{fig:Zener_diode}:
+
+\begin{figure}[H]
+	\centering
+	\captionsetup{font=footnotesize}
+	\includegraphics[width=.6\textwidth]{Zener diode.png}
+	\caption{Typical I-U-graph of a Zener diode\cite{ZenerDiodePicture}}
+	\label{fig:Zener_diode}
+\end{figure}
+
+The above shown effect is commonly known as the "Zener effect" named after Clarence Melvin Zener, who originally discovered the Zener diode. The effect can be used to stabilize voltage drops by putting a zener diode in parallel to a load. If the voltage exceeds a certain limit, the zener diode would break down, letting the current pass through almost uninterrupted. This would cause the voltage to drop, which again would lead the zener diode to block again and giving back a stabilized voltage to the load.
 
 \subsection{Inverting Schmitt Trigger}
 Inverting Schmitt triggers are electronic circuits used to convert slowly varying or noisy input signals into well-defined digital output signals. Furthermore, they can be used to invert a swtiching voltage provided by e.g. a digital output. Unlike conventional inverters, they incorporate hysteresis, meaning that the switching threshold depends on whether the input voltage is increasing or decreasing. This behavior improves noise immunity and prevents unwanted output transitions when the input fluctuates near the switching threshold.
@@ -508,11 +541,6 @@ The final equation can be simplified using the standard atmosphere,  which is de
 	h &= \frac{288.15\,\text{K}}{0.0065\,\frac{\text{K}}{\text{m}}}\left(1 - \left(\frac{p(h)}{1013.25\,\text{hPa}}\right)^{\frac{1}{5.255}}\right)
 	\label{eqn:barometric_formula_altitude}
 \end{align}
-
-\section{Nyquist Criteria}
-
-
-\section{Avionics Architecture for Recovery Systems}
 
 \newpage
 
